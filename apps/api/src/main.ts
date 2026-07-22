@@ -22,7 +22,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const port = process.env.PORT ?? 3000;
-  await app.listen(port);
-  console.log(`LegalOS Backend API running on: http://localhost:${port}/v1`);
+  await app.listen(port, '0.0.0.0');
+  console.log(`LegalOS Backend API running on port ${port}/v1`);
 }
 bootstrap();
