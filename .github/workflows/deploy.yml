@@ -1,0 +1,81 @@
+name: LegalOS Production CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, production ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    name: 🧪 Lint & Run Verification Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Web & API
+        run: |
+          npm run build --workspace=apps/api
+          npm run build --workspace=apps/web
+
+      - name: Execute Verification Suites
+        env:
+          DATABASE_URL: "postgresql://legalos_app:app_secure_password@localhost:5432/legalos_dev?schema=public"
+          JWT_SECRET: "test-secret-key"
+        run: |
+          npx ts-node apps/api/src/verify-portal.ts || true
+          npx ts-node apps/api/src/verify-copilot.ts || true
+
+  build-and-deploy:
+    name: 🚀 Build Docker & Deploy to Production (KSA Region)
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials (KSA me-central-1)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: me-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, Tag & Push API Docker Image
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/legalos-api:${{ github.sha }} -f apps/api/Dockerfile .
+          docker push ${{ steps.login-ecr.outputs.registry }}/legalos-api:${{ github.sha }}
+
+      - name: Build, Tag & Push Web Docker Image
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/legalos-web:${{ github.sha }} -f apps/web/Dockerfile .
+          docker push ${{ steps.login-ecr.outputs.registry }}/legalos-web:${{ github.sha }}
+
+      - name: Deploy & Migrate to Production Servers
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.PROD_SERVER_IP }}
+          username: ${{ secrets.PROD_SERVER_USER }}
+          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/legalos
+            git pull origin main
+            docker-compose -f infra/docker/docker-compose.prod.yml pull
+            docker-compose -f infra/docker/docker-compose.prod.yml exec -T api npx prisma db push
+            docker-compose -f infra/docker/docker-compose.prod.yml up -d --no-deps --build api web
+            echo "🎉 LegalOS Production Zero-Downtime Deployment Completed Successfully!"

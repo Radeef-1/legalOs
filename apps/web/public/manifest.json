@@ -1,0 +1,43 @@
+{
+  "name": "LegalOS — منصة إدارة المكاتب القانونية",
+  "short_name": "LegalOS",
+  "description": "منصة SaaS متكاملة لإدارة مكاتب المحاماة والاستشارات القانونية مدمجة مع بوابة ناجز",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#1a365d",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "قضية جديدة",
+      "short_name": "قضية",
+      "description": "إنشاء قضية جديدة",
+      "url": "/cases?action=new",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "التقويم للجلسات",
+      "short_name": "الجلسات",
+      "description": "استعراض جلسات اليوم",
+      "url": "/calendar",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

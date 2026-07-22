@@ -1,0 +1,199 @@
+# Client Portal — بوابة العملاء (Legal Collaboration Workspace)
+
+تحويل بوابة العملاء الحالية من مجموعة خدمات بسيطة (OTP Auth + Cases View + Documents + Finance) إلى **مساحة تعاون آمنة متكاملة** بين المكتب والعميل، تتضمن: Messaging، Timeline، Action Center، Appointments، Branding، Permissions، Audit Log، والمزيد.
+
+## الحالة الحالية (ما هو مبني فعلاً)
+
+| المكون | الحالة | الملف |
+|---|---|---|
+| Portal Auth (OTP + JWT) | ✅ مكتمل | [portal-auth.service.ts](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/src/portal/application/services/portal-auth.service.ts) |
+| Portal Cases (List + Detail + Client Requests) | ✅ مكتمل جزئياً | [portal-cases.service.ts](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/src/portal/application/services/portal-cases.service.ts) |
+| Portal Documents (Upload + List) | ✅ مكتمل بسيط | [portal-documents.service.ts](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/src/portal/application/services/portal-documents.service.ts) |
+| Portal Finance (Invoices + Pay) | ✅ مكتمل | [portal-finance.service.ts](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/src/portal/application/services/portal-finance.service.ts) |
+| Prisma Models (PortalSession + ClientRequest) | ✅ موجود | [schema.prisma#L1496-L1533](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/prisma/schema.prisma#L1496-L1533) |
+| Portal Controller (REST Endpoints) | ✅ مكتمل جزئياً | [client-portal.controller.ts](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/src/portal/controllers/client-portal.controller.ts) |
+| Portal Guard (JWT Validation) | ❌ مفقود | لا يوجد guard خاص بالبوابة |
+| Dashboard Summary | ❌ مفقود | — |
+| Case Timeline + Progress | ❌ مفقود | — |
+| Messaging (Chat) | ❌ مفقود | لا يوجد model ولا service |
+| Action Center | ❌ مفقود | — |
+| Appointments | ❌ مفقود | — |
+| Portal Branding | ❌ مفقود | WorkspaceBranding موجود لكن لا يوجد ربط بالبوابة |
+| Portal Permissions (per-client) | ❌ مفقود | — |
+| Portal Audit Log | ❌ مفقود | — |
+| Portal Notifications | ❌ مفقود | — |
+
+---
+
+## Proposed Changes
+
+### Phase 1 — Database Models (Prisma Schema)
+
+#### [MODIFY] [schema.prisma](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/prisma/schema.prisma)
+
+إضافة 7 نماذج جديدة إلى نهاية الـ Schema:
+
+1. **`PortalMessage`** — الرسائل بين المحامي والعميل
+   - `id`, `organizationId`, `caseId?`, `senderId`, `senderType` (CLIENT/LAWYER), `content`, `messageType` (TEXT/FILE/VOICE), `fileUrl?`, `isRead`, `createdAt`
+   - Relations: Organization, Client, Case
+
+2. **`ClientAction`** — مركز الإجراءات المطلوبة (Action Center)
+   - `id`, `organizationId`, `clientId`, `caseId?`, `actionType` (UPLOAD_DOCUMENT/SIGN_DOCUMENT/PAY_INVOICE/CONFIRM_HEARING/PROVIDE_INFO), `title`, `description?`, `status` (PENDING/COMPLETED/EXPIRED), `dueDate?`, `completedAt?`, `relatedEntityId?`, `createdAt`
+   - Relations: Organization, Client, Case
+
+3. **`PortalAppointment`** — حجز المواعيد
+   - `id`, `organizationId`, `clientId`, `caseId?`, `appointmentType` (IN_PERSON/ZOOM/GOOGLE_MEET/TEAMS/PHONE), `title`, `scheduledAt`, `endAt`, `meetingUrl?`, `status` (REQUESTED/CONFIRMED/CANCELLED/COMPLETED), `notes?`, `createdAt`
+   - Relations: Organization, Client, Case
+
+4. **`PortalBranding`** — هوية بصرية للمكتب في البوابة
+   - `id`, `organizationId` (unique), `logoUrl?`, `primaryColor`, `secondaryColor`, `fontFamily?`, `customDomain?`, `welcomeMessage?`
+   - Relation: Organization
+
+5. **`PortalPermission`** — صلاحيات العميل في البوابة
+   - `id`, `organizationId`, `clientId`, `canViewCases`, `canViewDocuments`, `canViewInvoices`, `canUpload`, `canSign`, `canMessage`, `canViewNotes`, `canViewVerdict`, `canRequestAppointment`
+   - Relations: Organization, Client
+
+6. **`PortalAuditLog`** — سجل تدقيق البوابة
+   - `id`, `organizationId`, `clientId`, `action` (LOGIN/VIEW_CASE/DOWNLOAD_DOC/UPLOAD_DOC/SIGN_DOC/SEND_MESSAGE/PAY_INVOICE), `entityType?`, `entityId?`, `ipAddress?`, `userAgent?`, `createdAt`
+   - Relations: Organization, Client
+
+7. **`CaseTimeline`** — مراحل القضية (Amazon-style tracking)
+   - `id`, `organizationId`, `caseId`, `phase`, `title`, `description?`, `status` (COMPLETED/CURRENT/UPCOMING), `completedAt?`, `sortOrder`, `createdAt`
+   - Relations: Organization, Case
+
+إضافة enums جديدة:
+- `PortalMessageType`: TEXT, FILE, VOICE
+- `PortalSenderType`: CLIENT, LAWYER
+- `ClientActionType`: UPLOAD_DOCUMENT, SIGN_DOCUMENT, PAY_INVOICE, CONFIRM_HEARING, PROVIDE_INFO
+- `ClientActionStatus`: PENDING, COMPLETED, EXPIRED
+- `PortalAppointmentType`: IN_PERSON, ZOOM, GOOGLE_MEET, TEAMS, PHONE
+- `PortalAppointmentStatus`: REQUESTED, CONFIRMED, CANCELLED, COMPLETED
+- `PortalAuditAction`: LOGIN, VIEW_CASE, DOWNLOAD_DOC, UPLOAD_DOC, SIGN_DOC, SEND_MESSAGE, PAY_INVOICE
+- `CaseTimelineStatus`: COMPLETED, CURRENT, UPCOMING
+
+تحديث الـ Relations في موديلات Organization, Client, Case لتشمل الحقول الجديدة.
+
+---
+
+### Phase 2 — Portal Auth Guard
+
+#### [NEW] `apps/api/src/shared/guards/portal-auth.guard.ts`
+
+Guard خاص ببوابة العملاء يتحقق من:
+- وجود `x-portal-token` header
+- التأكد من أن الـ token صالح ومرتبط بـ PortalSession نشطة
+- حقن `clientId` و `organizationId` في الـ request
+
+---
+
+### Phase 3 — New Portal Services (8 ملفات)
+
+#### [NEW] `apps/api/src/portal/application/services/portal-dashboard.service.ts`
+- `getDashboardSummary(orgId, clientId)` — يُرجع ملخص: عدد القضايا، الجلسات القادمة، المستندات المطلوبة، الفواتير غير المدفوعة، الرسائل الجديدة، الإجراءات المعلقة
+
+#### [NEW] `apps/api/src/portal/application/services/portal-timeline.service.ts`
+- `getCaseTimeline(orgId, clientId, caseId)` — يُرجع مراحل القضية مع النسبة المئوية للإنجاز
+- `getCaseProgress(orgId, clientId, caseId)` — حساب نسبة الإنجاز
+
+#### [NEW] `apps/api/src/portal/application/services/portal-messaging.service.ts`
+- `sendMessage(orgId, clientId, dto)` — إرسال رسالة
+- `getMessages(orgId, clientId, caseId?)` — جلب المحادثات
+- `markAsRead(orgId, clientId, messageId)` — تحديد كمقروء
+- `getUnreadCount(orgId, clientId)` — عدد الرسائل غير المقروءة
+
+#### [NEW] `apps/api/src/portal/application/services/portal-actions.service.ts`
+- `getPendingActions(orgId, clientId)` — الإجراءات المطلوبة
+- `createAction(orgId, clientId, dto)` — إنشاء إجراء (من جانب المكتب)
+- `completeAction(orgId, clientId, actionId)` — إكمال إجراء
+
+#### [NEW] `apps/api/src/portal/application/services/portal-appointments.service.ts`
+- `requestAppointment(orgId, clientId, dto)` — طلب موعد
+- `getAppointments(orgId, clientId)` — جلب المواعيد
+- `cancelAppointment(orgId, clientId, appointmentId)` — إلغاء
+
+#### [NEW] `apps/api/src/portal/application/services/portal-branding.service.ts`
+- `getBranding(orgId)` — جلب هوية المكتب للبوابة
+- `updateBranding(orgId, dto)` — تحديث (من جانب المكتب)
+- `resolveBySlug(slug)` — حل slug المكتب إلى orgId
+
+#### [NEW] `apps/api/src/portal/application/services/portal-permissions.service.ts`
+- `getClientPermissions(orgId, clientId)` — جلب صلاحيات العميل
+- `updateClientPermissions(orgId, clientId, dto)` — تحديث (من جانب المكتب)
+
+#### [NEW] `apps/api/src/portal/application/services/portal-audit.service.ts`
+- `logActivity(orgId, clientId, action, entityType?, entityId?, metadata?)` — تسجيل نشاط
+- `getActivityLog(orgId, clientId, page, limit)` — جلب سجل النشاط
+
+---
+
+### Phase 4 — Controllers
+
+#### [MODIFY] [client-portal.controller.ts](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/src/portal/controllers/client-portal.controller.ts)
+
+إضافة endpoints جديدة:
+- `GET /portal/dashboard` — ملخص لوحة التحكم
+- `GET /portal/cases/:id/timeline` — Timeline القضية
+- `GET /portal/cases/:id/progress` — نسبة إنجاز القضية
+- `GET /portal/messages` — المحادثات
+- `POST /portal/messages` — إرسال رسالة
+- `PATCH /portal/messages/:id/read` — تحديد كمقروء
+- `GET /portal/actions` — الإجراءات المطلوبة
+- `PATCH /portal/actions/:id/complete` — إكمال إجراء
+- `GET /portal/appointments` — المواعيد
+- `POST /portal/appointments` — طلب موعد
+- `DELETE /portal/appointments/:id` — إلغاء
+- `GET /portal/branding` — الهوية البصرية
+- `GET /portal/activity-log` — سجل النشاط
+
+#### [NEW] `apps/api/src/portal/controllers/portal-admin.controller.ts`
+
+Controller خاص بالمكتب لإدارة البوابة:
+- `GET /portal-admin/clients/:id/permissions` — صلاحيات عميل
+- `PATCH /portal-admin/clients/:id/permissions` — تحديث صلاحيات
+- `POST /portal-admin/clients/:id/actions` — إنشاء إجراء مطلوب
+- `PATCH /portal-admin/branding` — تحديث الهوية البصرية
+- `GET /portal-admin/analytics` — إحصائيات البوابة
+- `PATCH /portal-admin/appointments/:id/confirm` — تأكيد موعد
+- `POST /portal-admin/cases/:caseId/timeline` — إضافة مرحلة للقضية
+
+---
+
+### Phase 5 — Module Update
+
+#### [MODIFY] [portal.module.ts](file:///c:/Users/z2k1s/OneDrive/Pictures/naj1/apps/api/src/portal/portal.module.ts)
+
+تسجيل جميع الخدمات والـ Controllers الجديدة.
+
+---
+
+## Open Questions
+
+> [!IMPORTANT]
+> 1. **Custom Domain**: هل تريد تنفيذ دعم النطاقات المخصصة (Custom Domains) في هذه المرحلة، أم يكفي الاعتماد على `slug` في URL (مثل `portal.legalos.sa/alharthi-law`)؟
+> 2. **Family Access**: هل تريد تنفيذ نظام وصول أفراد الأسرة/الوكلاء في هذه المرحلة؟ سيحتاج نموذج `PortalAccessDelegate` إضافي.
+> 3. **Voice Notes + AI OCR**: هل تريد تنفيذ Speech-to-Text و OCR في هذه المرحلة، أم تأجيلها لمرحلة الذكاء الاصطناعي (Phase 3 في الـ Roadmap)؟
+> 4. **E-Signature**: هل هناك مزود خدمة توقيع إلكتروني مُحدد (مثل DocuSign أو حل محلي)؟
+> 5. **Payment Gateway**: هل هناك مزود دفع محدد (مثل Moyasar, HyperPay, Tap) أم نكتفي بالـ Mock adapter الحالي؟
+
+---
+
+## Verification Plan
+
+### Automated Tests
+```bash
+npx ts-node src/verify-portal.ts
+```
+سيتم تحديث ملف التحقق ليشمل جميع السيناريوهات الجديدة:
+1. Dashboard Summary aggregation
+2. Case Timeline creation + progress calculation
+3. Messaging send/receive/markRead
+4. Action Center create/complete/expire
+5. Appointment request/confirm/cancel
+6. Branding CRUD + slug resolution
+7. Permissions enforcement
+8. Audit log recording + querying
+9. Multi-tenant RLS isolation for all new models
+
+### Manual Verification
+- تشغيل `npm run build` للتأكد من نجاح الـ TypeScript compilation
+- تشغيل `npx prisma db push` لتطبيق تغييرات الـ Schema على قاعدة البيانات

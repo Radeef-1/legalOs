@@ -1,0 +1,389 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   LegalOS Design System — DESIGN.md Token Implementation
+   Corporate Modern · Institutional Trust · Saudi Legal Precision
+   ============================================================ */
+
+:root {
+  /* ── Surface System ── */
+  --surface: #f8f9ff;
+  --surface-dim: #cbdbf5;
+  --surface-bright: #f8f9ff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #eff4ff;
+  --surface-container: #e5eeff;
+  --surface-container-high: #dce9ff;
+  --surface-container-highest: #d3e4fe;
+  --on-surface: #0b1c30;
+  --on-surface-variant: #44474c;
+  --inverse-surface: #213145;
+  --inverse-on-surface: #eaf1ff;
+
+  /* ── Outline ── */
+  --outline: #74777d;
+  --outline-variant: #c4c6cd;
+
+  /* ── Primary (Deep Navy) ── */
+  --primary: #041627;
+  --on-primary: #ffffff;
+  --primary-container: #1a2b3c;
+  --on-primary-container: #8192a7;
+  --inverse-primary: #b7c8de;
+
+  /* ── Secondary (Emerald Green) ── */
+  --secondary: #1b6d24;
+  --on-secondary: #ffffff;
+  --secondary-container: #a0f399;
+  --on-secondary-container: #217128;
+
+  /* ── Tertiary (Deep Blue) ── */
+  --tertiary: #00162a;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #002b4b;
+  --on-tertiary-container: #3d95e2;
+
+  /* ── Error ── */
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+
+  /* ── Status Tones ── */
+  --status-ongoing: #0077C2;
+  --status-action: #D32F2F;
+  --status-warning: #F59E0B;
+
+  /* ── Background ── */
+  --background: #f8f9ff;
+  --on-background: #0b1c30;
+
+  /* ── Elevation Shadows ── */
+  --shadow-level-1: 0 1px 3px rgba(11, 28, 48, 0.05);
+  --shadow-level-2: 0 4px 12px rgba(11, 28, 48, 0.10);
+  --shadow-interactive-hover: 0 6px 20px rgba(11, 28, 48, 0.12);
+}
+
+/* ── Global Reset ── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--on-surface);
+  background: var(--background);
+  font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Custom Scrollbar (Light Theme) ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-container-low);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--outline);
+}
+
+/* ============================================================
+   Elevation System — Tonal Layering + Ambient Shadows
+   ============================================================ */
+
+/* Level 0: Background surface */
+.surface-base {
+  background: var(--background);
+}
+
+/* Level 1: Cards, Tables — White + 1px border + soft shadow */
+.card-level-1 {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  box-shadow: var(--shadow-level-1);
+}
+
+/* Level 2: Modals, Dropdowns — White + darker border + deeper shadow */
+.card-level-2 {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline);
+  box-shadow: var(--shadow-level-2);
+}
+
+/* Interactive Hover: Lift + accent inline-start border */
+.card-interactive {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  box-shadow: var(--shadow-level-1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-interactive-hover);
+  border-inline-start: 2px solid var(--primary);
+}
+
+/* ============================================================
+   Component Utilities
+   ============================================================ */
+
+/* Primary Button: Solid Deep Navy */
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  font-weight: 600;
+  border-radius: 0.25rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--primary-container);
+  box-shadow: 0 2px 8px rgba(4, 22, 39, 0.2);
+}
+
+/* Secondary Button: White + Slate border */
+.btn-secondary {
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font-weight: 500;
+  border-radius: 0.25rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--outline-variant);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: var(--surface-container-low);
+  border-color: var(--outline);
+}
+
+/* Form field focus ring → Emerald Green */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--secondary) !important;
+  box-shadow: 0 0 0 2px rgba(27, 109, 36, 0.2);
+}
+
+/* ── Status Badges (Pill-shaped) ── */
+.badge-ongoing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(0, 119, 194, 0.08);
+  color: var(--status-ongoing);
+}
+
+.badge-closed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(100, 116, 139, 0.08);
+  color: #475569;
+}
+
+.badge-pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(245, 158, 11, 0.08);
+  color: #b45309;
+}
+
+.badge-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(27, 109, 36, 0.08);
+  color: var(--secondary);
+}
+
+.badge-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(211, 47, 47, 0.08);
+  color: var(--status-action);
+}
+
+/* ── Professional Table ── */
+.table-pro thead {
+  background: var(--surface-container-low);
+}
+.table-pro thead th {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+  padding: 0.75rem 1rem;
+  text-align: start;
+}
+.table-pro tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--outline-variant);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+.table-pro tbody tr {
+  transition: background 0.15s ease;
+}
+.table-pro tbody tr:hover {
+  background: var(--surface-container-lowest);
+}
+
+/* ── Financial Data Card ── */
+.financial-card {
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  box-shadow: var(--shadow-level-1);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+.financial-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  inset-inline-start: 0;
+  width: 3px;
+}
+.financial-card.accent-navy::before {
+  background: var(--primary);
+}
+.financial-card.accent-green::before {
+  background: var(--secondary);
+}
+.financial-card.accent-blue::before {
+  background: var(--status-ongoing);
+}
+.financial-card.accent-amber::before {
+  background: var(--status-warning);
+}
+
+/* ── Najiz Integration Indicators ── */
+.najiz-connected {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--secondary);
+  font-weight: 500;
+}
+.najiz-connected::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--secondary);
+}
+.najiz-disconnected {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--status-action);
+  font-weight: 500;
+}
+
+/* ── Typography Utilities ── */
+.text-display-lg {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 60px;
+  letter-spacing: -0.02em;
+}
+.text-headline-lg {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+}
+.text-headline-lg-mobile {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+}
+.text-title-md {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+.text-body-lg {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+}
+.text-body-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+.text-label-md {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.01em;
+}
+.text-label-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.05em;
+}
+
+/* ── Tabular Figures for Financial Data ── */
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+  font-family: 'Inter', monospace;
+}
+
+/* ── RTL Considerations ── */
+[dir="rtl"] .card-interactive:hover {
+  border-inline-start: 2px solid var(--primary);
+  border-inline-end: 1px solid var(--outline-variant);
+}
