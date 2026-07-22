@@ -1,0 +1,13 @@
+name = "legalos-edge-worker"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+API_ORIGIN = "https://api.legalos.sa"
+WEB_ORIGIN = "https://web.legalos.sa"
+
+[[r2_buckets]]
+binding = "LEGALOS_R2_BUCKET"
+bucket_name = "legalos-prod"
