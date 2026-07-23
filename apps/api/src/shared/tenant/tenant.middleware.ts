@@ -13,6 +13,12 @@ export class TenantMiddleware implements NestMiddleware {
     const defaultUserId = '11111111-1111-1111-1111-111111111111';
     const defaultRole = 'Partner';
 
+    // Extract subdomain from host or custom header (e.g. salman-law.seiflden.online)
+    const host = req.headers.host || '';
+    const hostSubdomain = host.split('.')[0];
+    const customHeaderSubdomain = (req.headers['x-tenant-subdomain'] as string) || '';
+    const resolvedSubdomain = customHeaderSubdomain || (hostSubdomain !== 'localhost' && hostSubdomain !== 'www' ? hostSubdomain : '');
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       // Dev mode fallback context
       return TenantContext.run(
