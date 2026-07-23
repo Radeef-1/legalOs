@@ -460,7 +460,7 @@ export default function AdminControlCenterPage() {
                     { title: "الطبقة 12: مركز الإنذارات اللحظي", desc: "إرسال إنذار عبر البريد والـ Telegram عند 5 محاولات فاشلة.", icon: Radio, status: "نشط 🟢" },
                     { title: "الطبقة 13: حساب الطوارئ Break Glass", desc: "حساب الطوارئ المراقَب للحالات القاهرية والكوارث.", icon: Zap, status: "محمي 🟢" },
                     { title: "الطبقة 14: محرك الانتحال Impersonation", desc: "الدخول التفقدي كمكتب دون معرفة كلمة مرور الموكل.", icon: Workflow, status: "متاح 🟢" },
-                    { title: "الطبقة 15: إدارة الأسرار Secret Vault", desc: "عزل مفاتيح Authentica, ZATCA, Stripe خارج الكود.", icon: Database, status: "نشط 🟢" },
+                    { title: "الطبقة 15: إدارة الأسرار Secret Vault", desc: "عزل مفاتيح البوابات والربط والفوترة خارج الكود.", icon: Database, status: "نشط 🟢" },
                   ].map((layer, idx) => (
                     <div key={idx} className="p-4 rounded-card bg-surface-container-low border border-outline-variant space-y-2 text-right">
                       <div className="flex items-center justify-between">
@@ -579,8 +579,8 @@ export default function AdminControlCenterPage() {
                 <div className="space-y-3">
                   <div className="p-4 rounded-card bg-surface-container-low border border-outline-variant flex items-center justify-between">
                     <div>
-                      <p className="font-bold text-primary">بوابة الرسائل النصية (Authentica.sa)</p>
-                      <p className="text-xs text-on-surface-variant">https://api.authentica.sa/api/v2</p>
+                      <p className="font-bold text-primary">بوابة الرسائل النصية والتوثيق المعتمدة</p>
+                      <p className="text-xs text-on-surface-variant">بوابة التوثيق الرقمي المباشرة بالمملكة</p>
                     </div>
                     <span className="text-xs font-bold text-emerald-700 bg-emerald-500/10 px-3 py-1 rounded-pill">نشط 🟢</span>
                   </div>

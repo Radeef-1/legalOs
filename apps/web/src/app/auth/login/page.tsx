@@ -128,11 +128,11 @@ export default function LoginPage() {
       const data = await res.json().catch(() => ({}));
       setSendingOtp(false);
       setOtpSent(true);
-      setOtpStatusMsg(`تم إرسال رمز OTP بنجاح إلى جوالك (${formattedPhone}) عبر Authentica.sa 🟢`);
+      setOtpStatusMsg(`تم إرسال رمز التحقق بنجاح إلى جوالك (${formattedPhone}) 🟢`);
     } catch (err: any) {
       setSendingOtp(false);
       setOtpSent(true);
-      setOtpStatusMsg(`تم إرسال رمز OTP عبر بوابة Authentica.sa 🟢`);
+      setOtpStatusMsg(`تم إرسال رمز التحقق إلى جوالك 🟢`);
     }
   };
 

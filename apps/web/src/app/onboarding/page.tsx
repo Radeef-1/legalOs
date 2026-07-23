@@ -168,13 +168,13 @@ export default function FirmOnboardingPage() {
 
       if (res.ok && data.success) {
         setOtpSent(true);
-        setOtpStatusMsg(`تم إرسال رمز التحقق OTP بنجاح إلى جوالك (${formattedPhone}) عبر ${otpMethod === "sms" ? "رسالة SMS" : "الواتساب"} من Authentica.sa 🟢`);
+        setOtpStatusMsg(`تم إرسال رمز التحقق بنجاح إلى جوالك (${formattedPhone}) عبر ${otpMethod === "sms" ? "رسالة SMS" : "الواتساب"} 🟢`);
       } else {
-        setOtpStatusMsg(`تنبيه Authentica.sa: ${data.message || "تم إرسال رمز التحقق OTP لجوالك."}`);
+        setOtpStatusMsg(`تنبيه التوثيق: ${data.message || "تم إرسال رمز التحقق لجوالك."}`);
       }
     } catch (err: any) {
       setSendingOtp(false);
-      setOtpStatusMsg(`تم إرسال الطلب عبر Authentica.sa 🟢`);
+      setOtpStatusMsg(`تم إرسال رمز التحقق لجوالك بنجاح 🟢`);
     }
   };
 
@@ -259,7 +259,7 @@ export default function FirmOnboardingPage() {
         return;
       }
       if (!formData.isOtpVerified) {
-        alert("⛔ شرط إلزامي وأمني: يجب الضغط على 'أرسل رمز OTP الجوال' وإدخال الرمز والتأكيد المباشر عبر بوابة Authentica.sa قبل الانتقال للخطوة التالية.");
+        alert("⛔ شرط إلزامي وأمني: يجب إدخال وتأكيد رمز التحقق المرسل لجوالك بنجاح قبل الانتقال للخطوة التالية.");
         return;
       }
     }

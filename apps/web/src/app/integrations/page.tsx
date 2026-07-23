@@ -94,7 +94,7 @@ export default function IntegrationsPage() {
     },
     {
       id: "AUTHENTICA_SA",
-      name: "منصة أثنتيكا السعودية (Authentica.sa)",
+      name: "بوابة التوثيق الرقمي والـ OTP المعتمدة",
       url: "https://authentica.sa",
       category: "تحقق بالـ OTP وبصمة حيويّة",
       status: "متصل وحي 🟢",

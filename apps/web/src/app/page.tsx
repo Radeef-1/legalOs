@@ -478,7 +478,7 @@ export default function EnterpriseLandingPage() {
             {[
               { name: "ناجز (MoJ)", type: "قضاء وترافع" },
               { name: "ZATCA Phase 2", type: "فوترة إلكترونية" },
-              { name: "Authentica.sa", type: "تحقق OTP و بصمة" },
+              { name: "منصة التوثيق الرقمي", type: "تحقق OTP و بصمة" },
               { name: "Google Workspace", type: "بريد وتقويم" },
               { name: "Microsoft 365", type: "إنتاجية ومستندات" },
               { name: "WhatsApp Business", type: "تنبيهات فورية" },
@@ -701,7 +701,7 @@ export default function EnterpriseLandingPage() {
               <li>امتثال نظام PDPL السعودي</li>
               <li>الفوترة الإلكترونية ZATCA</li>
               <li>تشفير 256-bit SSL</li>
-              <li>التحقق بالـ OTP من Authentica.sa</li>
+              <li>التحقق الذكي بالـ OTP لجميع المعاملات</li>
             </ul>
           </div>
           <div className="space-y-2">
