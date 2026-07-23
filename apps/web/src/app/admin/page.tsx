@@ -855,10 +855,10 @@ export default function AdminControlCenterPage() {
                         <td className="py-3.5 text-on-surface-variant">{t._count?.cases || 42} قضية</td>
                         <td className="py-3.5 text-left">
                           <button
-                            onClick={() => alert(`تم الدخول في وضع الانتحال التجريبي للمكتب: ${t.name}`)}
+                            onClick={() => alert(`تم الدخول في وضع التفقّد المعيّن للمكتب: ${t.name}`)}
                             className="bg-primary/5 hover:bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-soft text-[11px] font-bold"
                           >
-                            دخول تجريبي (Impersonate)
+                            دخول تفقدي معتمد (Impersonate)
                           </button>
                         </td>
                       </tr>

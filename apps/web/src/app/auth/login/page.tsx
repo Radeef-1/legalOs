@@ -76,9 +76,9 @@ export default function LoginPage() {
     const userObj = {
       id: matchedLawyer ? (matchedLawyer as any).id : "u-101",
       email: userEmail,
-      fullName: matchedLawyer ? (matchedLawyer as any).name : userName || "د. عبد الرحمن الديمو",
+      fullName: matchedLawyer ? (matchedLawyer as any).name : userName || "د. عبد الرحمن بن فهد العتيبي",
       jobTitle: matchedLawyer ? (matchedLawyer as any).title : "مستشار قانوني ومحامي ممارس",
-      firmName: matchedFirm ? (matchedFirm as any).name : firmName || "مكتب الديمو المعتمد للمحاماة",
+      firmName: matchedFirm ? (matchedFirm as any).name : firmName || "مكتب العتيبي للمحاماة والاستشارات القانونية والشرعية",
       subdomain: subdomain || "firm-demo",
     };
 
@@ -150,7 +150,7 @@ export default function LoginPage() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو");
+      performSessionLogin("demo@demo22.com", "د. عبد الرحمن بن فهد العتيبي");
     }, 500);
   };
 
@@ -164,7 +164,7 @@ export default function LoginPage() {
     setNafathPending(true);
     setTimeout(() => {
       setNafathPending(false);
-      performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو");
+      performSessionLogin("demo@demo22.com", "د. عبد الرحمن بن فهد العتيبي");
     }, 1200);
   };
 
@@ -424,11 +424,11 @@ export default function LoginPage() {
           </form>
         )}
 
-        {/* Dedicated 1-Click Demo Sign-in Section */}
+        {/* Dedicated 1-Click Sign-in Section */}
         <div className="border-t border-outline-variant pt-4 space-y-3">
           <div className="text-label-sm font-semibold text-primary text-center flex items-center justify-center gap-1.5 flex-wrap">
-            <span>⚡ الدخول السريع للحساب التجريبي المعتمد</span>
-            <span className="text-[11px] text-on-surface-variant font-tabular" dir="ltr">(Quick 1-Click Demo)</span>
+            <span>⚡ الدخول السريع المعتمد لمسؤولي المكاتب</span>
+            <span className="text-[11px] text-on-surface-variant font-tabular" dir="ltr">(Enterprise 1-Click Login)</span>
           </div>
 
           <button
@@ -436,13 +436,13 @@ export default function LoginPage() {
             onClick={() => {
               setEmail("demo@demo22.com");
               setPassword("Demo123456");
-              performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو", "مكتب الديمو المعتمد للمحاماة واستشارات القضايا");
+              performSessionLogin("demo@demo22.com", "د. عبد الرحمن بن فهد العتيبي", "مكتب العتيبي للمحاماة والاستشارات القانونية والشرعية");
             }}
             className="w-full p-3.5 rounded-card bg-surface-container-low hover:bg-surface-container-high border border-primary/30 flex items-center justify-between text-right transition group shadow-level-1"
           >
             <div className="space-y-1">
               <div className="text-label-md font-bold text-primary flex items-center gap-2">
-                <span>🔑 حساب التجربة الرئيسي (Demo Account)</span>
+                <span>🔑 حساب مسؤول المكتب الرئيسي (العتيبي للمحاماة)</span>
                 <span className="bg-secondary/10 text-secondary border border-secondary/20 text-[10px] px-2 py-0.5 rounded-pill font-bold">جاهز</span>
               </div>
               <div className="text-label-sm text-on-surface-variant font-body flex items-center gap-2 flex-wrap">

@@ -106,14 +106,14 @@ export const SEEDED_FIRMS: LawFirm[] = [
   },
   {
     id: 'firm-demo',
-    name: 'مكتب الديمو المعتمد للمحاماة والاستشارات القانونية',
+    name: 'مكتب العتيبي للمحاماة والاستشارات القانونية والشرعية',
     slug: 'firm-demo',
     cr: '1010998877',
     unn: '7009988776',
     city: 'الرياض',
     lawyers: [
-      { id: 'l-demo-1', name: 'د. عبد الرحمن الديمو', email: 'demo@demo22.com', title: 'شريك رئيسي / المدير التنفيذي', licenseNumber: 'SA-LAW-2026-9900', casesCount: 25 },
-      { id: 'l-demo-2', name: 'أ. سارة الديمو', email: 'sara.demo@demo22.com', title: 'مستشارة عقود وتجاري', licenseNumber: 'SA-LAW-2026-9911', casesCount: 15 },
+      { id: 'l-demo-1', name: 'د. عبد الرحمن بن فهد العتيبي', email: 'demo@demo22.com', title: 'شريك رئيسي / المدير التنفيذي', licenseNumber: 'SA-LAW-2026-9900', casesCount: 25 },
+      { id: 'l-demo-2', name: 'أ. سارة بنت خالد العتيبي', email: 'sara@lawfirm.sa', title: 'مستشارة عقود وتجاري', licenseNumber: 'SA-LAW-2026-9911', casesCount: 15 },
     ],
   },
 ];
