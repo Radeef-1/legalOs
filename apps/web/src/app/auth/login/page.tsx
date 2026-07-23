@@ -25,8 +25,8 @@ export default function LoginPage() {
   const [nationalId, setNationalId] = useState<string>("1092837412");
   const [nafathPending, setNafathPending] = useState<boolean>(false);
 
-  const [email, setEmail] = useState<string>("salman.partner@salman-law.sa");
-  const [password, setPassword] = useState<string>("password123");
+  const [email, setEmail] = useState<string>("demo@demo22.com");
+  const [password, setPassword] = useState<string>("Demo123456");
 
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -438,6 +438,28 @@ export default function LoginPage() {
           </p>
 
           <div className="grid grid-cols-1 gap-2">
+            {/* Dedicated Primary Demo Account Button */}
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("demo@demo22.com");
+                setPassword("Demo123456");
+                performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو", "مكتب الديمو المعتمد للمحاماة والاستشارات القانونية");
+              }}
+              className="w-full p-3.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 flex items-center justify-between text-right transition group shadow-md"
+            >
+              <div>
+                <div className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                  <span>🔑 حساب التجربة الرئيسي (Demo Account)</span>
+                  <span className="bg-amber-500 text-slate-950 text-[10px] px-2 py-0.5 rounded-full font-bold">معتمد</span>
+                </div>
+                <div className="text-[11px] text-slate-300 font-body mt-0.5">
+                  demo@demo22.com | كلمة المرور: Demo123456
+                </div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-amber-400 -rotate-180 group-hover:translate-x-1 transition" />
+            </button>
+
             {SEEDED_FIRMS.map((firm) => {
               const mainLawyer = firm.lawyers[0];
               return (
