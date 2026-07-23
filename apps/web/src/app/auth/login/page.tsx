@@ -331,7 +331,7 @@ export default function LoginPage() {
               {loading ? (
                 <span className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
               ) : (
-                "تأكيد الدخول عبر Authentica OTP"
+                "تأكيد الدخول عبر رمز التحقق"
               )}
             </button>
           </form>

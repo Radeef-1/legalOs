@@ -318,15 +318,15 @@ export default function FirmOnboardingPage() {
   const getStepTitle = (step: number) => {
     switch (step) {
       case 1:
-        return "إنشاء الحساب والتحقق من الجوال (OTP)";
+        return "إنشاء حساب مسؤول المكتب والتحقق من رقم الجوال";
       case 2:
-        return "بيانات المكتب وترخيص وزارة العدل والسجل 700";
+        return "بيانات المنشأة وتراخيص وزارة العدل والسجل التجاري 700";
       case 3:
-        return "الحساب البنكي والفوترة الضريبية ZATCA Phase 2";
+        return "الحساب البنكي المعتمد والفوترة الضريبية ZATCA Phase 2";
       case 4:
-        return "الهوية الوطنية وتوقيع الشريك المدير والامتثال";
+        return "توثيق الهوية الوطنية وتوقيع الشريك المدير والامتثال";
       case 5:
-        return "المراجعة واختيار الباقة والاعتماد الفوري";
+        return "المراجعة واختيار الباقة وتأكيد الاعتماد الفوري";
       default:
         return "إعدادات الاعتماد والتوثيق";
     }
@@ -346,11 +346,11 @@ export default function FirmOnboardingPage() {
             <h1 className="text-title-md font-bold text-primary flex items-center gap-2">
               رحلة اعتماد وإعداد مكتب المحاماة (Firm Verification & Activation)
               <span className="text-[10px] bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 px-2 py-0.5 rounded-pill font-body font-bold">
-                Stripe Atlas Model
+                نموذج الاعتماد المؤسسي الموحد
               </span>
             </h1>
             <p className="text-label-sm text-on-surface-variant font-body">
-              الاعتماد الرقمي الموحد وفق أنظمة وزارة العدل، ZATCA، ونظام PDPL السعودي
+              الاعتماد الرقمي الموحد وفق أنظمة وزارة العدل، ونظام ZATCA الضريبي، ونظام PDPL لحماية البيانات
             </p>
           </div>
         </div>
@@ -363,9 +363,9 @@ export default function FirmOnboardingPage() {
 
           <button
             onClick={() => router.push("/")}
-            className="btn-secondary text-label-sm py-1.5 px-3"
+            className="btn-secondary text-label-sm py-1.5 px-3 font-semibold"
           >
-            إلغاء والعودة للوحة
+            إلغاء والعودة للوحة التحكم
           </button>
         </div>
       </header>
@@ -430,11 +430,17 @@ export default function FirmOnboardingPage() {
             <div className="space-y-5">
               <h2 className="text-title-lg font-bold text-primary flex items-center gap-2">
                 <Users className="w-6 h-6 text-primary" />
-                المرحلة 1: إنشاء حساب مسؤول المكتب والتحقق من رقم الجوال (OTP)
+                المرحلة 1: إنشاء حساب مسؤول المكتب والتحقق من رقم الجوال
               </h2>
               <p className="text-body-md text-on-surface-variant font-body">
-                أدخل البيانات الشخصية للمسؤول المالي أو الشريك الممثل للمكتب واضغط إرسال الرمز للاستلام عبر SMS أو الواتساب بواسطة بوابة Authentica.sa.
+                هذا الحساب مخصص للشريك الممثل للمكتب أو المسؤول المالي المفوّض. أدخل بياناتك الرسمية ثم اضغط "إرسال رمز التحقق" لاستلامه عبر SMS أو الواتساب.
               </p>
+
+              {/* Explicit MOJ Najiz Integration Trust Badge */}
+              <div className="p-3 bg-primary/5 border border-primary/15 rounded-card flex items-center gap-2 text-xs font-semibold text-primary">
+                <Landmark className="w-4 h-4 text-primary shrink-0" />
+                <span>الربط الفوري المباشر مع منصة ناجز، وزارة العدل، الفوترة الضريبية ZATCA، ونظام حماية البيانات (PDPL) 🏛️</span>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -459,7 +465,7 @@ export default function FirmOnboardingPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-label-sm font-semibold text-on-surface">رقم الجوال المسجل في نفاذ</label>
+                  <label className="text-label-sm font-semibold text-on-surface">رقم الجوال الرسمي</label>
                   <div className="flex gap-2 mt-1">
                     <input
                       type="text"
@@ -478,6 +484,9 @@ export default function FirmOnboardingPage() {
                       <option value="whatsapp">واتساب WhatsApp</option>
                     </select>
                   </div>
+                  <span className="text-[11px] text-on-surface-variant font-body mt-1 block">
+                    * سيتم التوثيق الهوياتي عبر نظام نفاذ الوطني في مرحلة الاعتماد النهائية.
+                  </span>
                 </div>
                 <div>
                   <label className="text-label-sm font-semibold text-on-surface">رمز التحقق المؤقت (OTP)</label>
@@ -500,7 +509,7 @@ export default function FirmOnboardingPage() {
                         disabled={verifyingOtp}
                         className="btn-primary text-label-sm py-2 px-4 shrink-0 font-bold"
                       >
-                        {verifyingOtp ? "جاري التحقق..." : "تأكيد الرمز"}
+                        {verifyingOtp ? "جاري..." : "تأكيد الرمز"}
                       </button>
                     )}
                   </div>
@@ -512,7 +521,7 @@ export default function FirmOnboardingPage() {
                 <div className="flex items-center gap-2">
                   <Smartphone className="w-5 h-5 text-primary" />
                   <span className="text-label-sm text-on-surface-variant font-body">
-                    خدمة إرسال الـ OTP معتمدة ومربوطة بحساب <strong>Authentica.sa</strong> السعودي المباشر.
+                    خدمة إرسال رمز التحقق مرتبطة مباشرة بمركزي التوثيق الرقمي المعتمدين في المملكة 🟢
                   </span>
                 </div>
 
@@ -523,7 +532,7 @@ export default function FirmOnboardingPage() {
                   className="btn-secondary py-2.5 px-5 rounded-soft text-label-sm font-bold text-primary flex items-center gap-2 shadow-level-1 hover:bg-surface-container-high transition"
                 >
                   <Send className="w-4 h-4 text-primary" />
-                  {sendingOtp ? "جاري الإرسال عبر Authentica..." : "أرسل رمز OTP الجوال (Authentica.sa)"}
+                  {sendingOtp ? "جاري الإرسال..." : "إرسال رمز التحقق"}
                 </button>
               </div>
 
