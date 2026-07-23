@@ -2,7 +2,8 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './shared/database/prisma.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { AuditInterceptor } from './shared/interceptors/audit.interceptor';
 import { IamModule } from './iam/iam.module';
 import { TenantMiddleware } from './shared/tenant/tenant.middleware';
@@ -29,6 +30,11 @@ import { AdminControlModule } from './admin/admin-control.module';
 
 @Module({
   imports: [
+    // ── Security: Global Rate Limiting (60 req / 60 sec per IP) ──
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 60,
+    }]),
     PrismaModule,
     EventsModule,
     PolicyModule,
@@ -55,6 +61,10 @@ import { AdminControlModule } from './admin/admin-control.module';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditInterceptor,

@@ -4,10 +4,7 @@ import path from "path";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: path.resolve(__dirname, "../../"),
-  webpack: (config) => {
-    config.cache = false;
-    return config;
-  },
+  poweredByHeader: false, // Security: remove X-Powered-By header
 };
 
 export default nextConfig;
