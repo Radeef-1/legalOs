@@ -68,9 +68,7 @@ export class InvitationsController {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + expiryDays);
 
-    const tempId = `inv-${Date.now()}`;
-    const targetContact = dto.email || dto.phone || 'contact';
-    const { token, tokenHash } = this.securityService.generateInviteToken(tempId, orgId, targetContact);
+    const { token, tokenHash } = this.securityService.generateSecureToken();
 
     const invitation = await this.prisma.db.enterpriseInvitation.create({
       data: {
@@ -98,7 +96,7 @@ export class InvitationsController {
       },
     });
 
-    const publicUrl = `http://localhost:3000/invite/${encodeURIComponent(token)}`;
+    const publicUrl = this.securityService.formatProductionInviteUrl(dto.type || 'lawyer', token, 'otaibi-law');
     const whatsappUrl = dto.phone
       ? this.deliveryService.generateWhatsAppLink(dto.phone, publicUrl, 'مكتب العتيبي للمحاماة')
       : null;
@@ -133,7 +131,7 @@ export class InvitationsController {
     },
   ) {
     const orgId = TenantContext.getTenantId() || 'org-salman-2026';
-    const results = [];
+    const results: any[] = [];
 
     for (const inv of dto.invites) {
       const created = await this.createInvitation({
@@ -144,7 +142,7 @@ export class InvitationsController {
         roleName: inv.roleName,
         channel: 'LINK',
       });
-      results.push(created.invitation);
+      results.push(created.invitation as any);
     }
 
     return { success: true, count: results.length, invitations: results };

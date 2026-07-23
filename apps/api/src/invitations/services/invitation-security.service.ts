@@ -6,16 +6,24 @@ export class InvitationSecurityService {
   private readonly secretKey = process.env.JWT_SECRET || 'super-secret-key-legalos-2026';
 
   /**
-   * Generates a signed HMAC token for an invitation with expiration and nonce
+   * Generates a 32-byte cryptographically secure unguessable random token and SHA-256 hash
    */
-  generateInviteToken(inviteId: string, orgId: string, emailOrPhone: string): { token: string; tokenHash: string } {
-    const nonce = crypto.randomBytes(16).toString('hex');
-    const payload = `${inviteId}:${orgId}:${emailOrPhone}:${nonce}:${Date.now()}`;
-    const signature = crypto.createHmac('sha256', this.secretKey).update(payload).digest('hex');
-    const token = Buffer.from(`${payload}:${signature}`).toString('base64url');
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+  generateSecureToken(): { token: string; tokenHash: string } {
+    // 32 bytes of cryptographically secure random entropy (producing ~43 unguessable characters)
+    const rawToken = crypto.randomBytes(32).toString('base64url');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+    return { token: rawToken, tokenHash };
+  }
 
-    return { token, tokenHash };
+  /**
+   * Formats a production-grade unguessable invitation URL supporting Tenant Subdomains and White Label domains
+   * Example: https://otaibi-law.legalos.sa/i/lawyer/4XJ8P6NKV9Q2MRT7YW6...
+   */
+  formatProductionInviteUrl(type: string, token: string, tenantSlug?: string): string {
+    const cleanType = (type || 'lawyer').toLowerCase();
+    const domain = tenantSlug ? `${tenantSlug}.legalos.sa` : 'portal.seiflden.online';
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    return `${protocol}://${domain}/i/${cleanType}/${token}`;
   }
 
   /**
