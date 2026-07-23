@@ -22,9 +22,31 @@ export function OrganizationInfoTab() {
     practiceAreas: ["دعاوى تجارية", "قضايا عمالية", "عقود وشركات", "تحكيم دولي", "تنفيذ قضاء"],
   });
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("organizationData");
+      if (saved) {
+        try {
+          setFormData(JSON.parse(saved));
+        } catch (e) {}
+      }
+    }
+  }, []);
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedStatus("تم حفظ بيانات المنشأة بنجاح 🟢");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("organizationData", JSON.stringify(formData));
+      const userObj = localStorage.getItem("user");
+      if (userObj) {
+        try {
+          const parsed = JSON.parse(userObj);
+          parsed.firmName = formData.nameAr;
+          localStorage.setItem("user", JSON.stringify(parsed));
+        } catch (e) {}
+      }
+    }
+    setSavedStatus("تم حفظ وحفظ بيانات المنشأة والتعديلات دائمياً 🟢");
     setTimeout(() => setSavedStatus(null), 3000);
   };
 

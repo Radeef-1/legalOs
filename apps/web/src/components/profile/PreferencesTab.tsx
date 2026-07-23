@@ -13,9 +13,23 @@ export function PreferencesTab() {
     density: "comfortable",
   });
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("userPreferences");
+      if (saved) {
+        try {
+          setPrefs(JSON.parse(saved));
+        } catch (e) {}
+      }
+    }
+  }, []);
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedStatus("تم حفظ تفضيلات المستخدم والنظام بنجاح 🟢");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("userPreferences", JSON.stringify(prefs));
+    }
+    setSavedStatus("تم حفظ وحفظ تفضيلات المستخدم والنظام بالفعل دائمياً 🟢");
     setTimeout(() => setSavedStatus(null), 3000);
   };
 

@@ -13,9 +13,23 @@ export function BrandingCenterTab() {
     smsSignature: "[العتيبي للمحاماة]",
   });
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("brandingSettings");
+      if (saved) {
+        try {
+          setBranding(JSON.parse(saved));
+        } catch (e) {}
+      }
+    }
+  }, []);
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedStatus("تم حفظ إعدادات الهوية البصرية بنجاح 🟢");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("brandingSettings", JSON.stringify(branding));
+    }
+    setSavedStatus("تم حفظ إعدادات الهوية البصرية والعلامات دائمياً 🟢");
     setTimeout(() => setSavedStatus(null), 3000);
   };
 
