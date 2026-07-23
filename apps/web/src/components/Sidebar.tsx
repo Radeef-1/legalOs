@@ -16,6 +16,7 @@ import {
   Building2,
   ShieldCheck,
   UserPlus,
+  Settings,
 } from "lucide-react";
 import { CommandKModal } from "./CommandKModal";
 
@@ -69,8 +70,6 @@ export function Sidebar() {
   const mainNavItems = [
     ...(isSuperAdmin ? [{ label: "مركز التشغيل القيادي", path: "/admin", icon: ShieldCheck, badge: "PRO" }] : []),
     { label: activeRole === "lawyer" ? "لوحة المحامي الفردي" : "لوحة التحكم الرئيسية", path: "/", icon: LayoutDashboard },
-    { label: "إدارة المكتب والملف الشخصي", path: "/profile", icon: Building2, badge: "v9" },
-    { label: "محرك الدعوات والعضويات", path: "/invitations", icon: UserPlus, badge: "v10" },
     { label: "إدارة القضايا والعملاء", path: "/cases", icon: Briefcase, badge: "حي" },
     { label: "لوحة المهام والإنذارات", path: "/tasks", icon: Kanban },
     { label: "التقويم وجلسات المحاكم", path: "/calendar", icon: Calendar },
@@ -79,8 +78,12 @@ export function Sidebar() {
 
   const engineNavItems = [
     { label: "المساعد القانوني الذكي", path: "/ai-assistant", icon: Sparkles, badge: "AI" },
-    { label: "منصة الربط (ناجز وتراضي)", path: "/integrations", icon: Workflow },
     { label: "التقارير وإقرار ZATCA", path: "/reports", icon: BarChart3 },
+  ];
+
+  const settingsNavItems = [
+    { label: "إدارة المكتب والملف الشخصي", path: "/profile", icon: Building2, badge: "v9" },
+    { label: "محرك الدعوات والعضويات", path: "/invitations", icon: UserPlus, badge: "v10" },
   ];
 
   return (
@@ -142,7 +145,7 @@ export function Sidebar() {
           })}
         </div>
 
-        {/* Section 2: Engines & Integrations */}
+        {/* Section 2: Engines & AI */}
         <div className="space-y-1 pt-2 border-t border-white/10">
           <p className="text-label-sm uppercase text-white/40 px-3 pb-1 tracking-wider">
             المحركات والذكاء
@@ -166,6 +169,45 @@ export function Sidebar() {
                 </div>
                 {item.badge && (
                   <span className="text-label-sm px-1.5 py-0.5 rounded-soft font-semibold bg-white/20 text-white">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Section 3: Settings & Governance */}
+        <div className="space-y-1 pt-2 border-t border-white/10">
+          <div className="flex items-center justify-between px-3 pb-1">
+            <p className="text-label-sm uppercase text-white/40 tracking-wider flex items-center gap-1.5">
+              <Settings className="w-3.5 h-3.5 text-secondary font-bold" />
+              <span>الإعدادات والحوكمة</span>
+            </p>
+          </div>
+          {settingsNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.path;
+            return (
+              <button
+                key={item.path}
+                onClick={() => router.push(item.path)}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-card text-label-md transition-all ${
+                  isActive
+                    ? "bg-white text-primary font-semibold shadow-level-1"
+                    : "hover:bg-white/10 text-white/80 hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3 truncate">
+                  <Icon className={`w-4 h-4 ${isActive ? "text-primary" : "text-white/70"}`} />
+                  <span className="truncate">{item.label}</span>
+                </div>
+                {item.badge && (
+                  <span
+                    className={`text-label-sm px-1.5 py-0.5 rounded-soft font-semibold ${
+                      isActive ? "bg-primary/10 text-primary" : "bg-white/20 text-white"
+                    }`}
+                  >
                     {item.badge}
                   </span>
                 )}
