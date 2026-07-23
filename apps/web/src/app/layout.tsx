@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import { LegalCopilotDrawer } from "@/components/LegalCopilotDrawer";
 import { PWAInstaller } from "@/pwa/pwa-installer";
+import { SkipToContent } from "@/components/SkipToContent";
 
 const ibmPlexArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -51,7 +52,8 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="font-heading bg-surface text-on-surface antialiased">
-        {children}
+        <SkipToContent />
+        <main id="main-content">{children}</main>
         <LegalCopilotDrawer />
         <PWAInstaller />
       </body>

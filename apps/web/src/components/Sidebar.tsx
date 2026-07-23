@@ -78,7 +78,11 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-full md:w-sidebar bg-primary text-on-primary p-4 flex flex-col justify-between shrink-0 min-h-[calc(100vh-57px)] space-y-6">
+    <aside
+      role="navigation"
+      aria-label="القائمة الجانبية الرئيسية"
+      className="w-full md:w-sidebar bg-primary text-on-primary p-4 flex flex-col justify-between shrink-0 min-h-[calc(100vh-57px)] space-y-6"
+    >
       <div className="space-y-5">
         {/* Tenant Info & Multi-Firm Consultant Switcher */}
         <div className="p-3.5 rounded-card bg-primary-container/50 border border-white/10 space-y-3">
