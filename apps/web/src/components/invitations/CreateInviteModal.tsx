@@ -37,6 +37,11 @@ export function CreateInviteModal({ isOpen, onClose, onSuccess }: CreateInviteMo
         }),
       }).catch(() => null);
 
+      const randomBytes = Array.from(crypto.getRandomValues(new Uint8Array(24)))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      const publicUrl = `https://otaibi-law.legalos.sa/i/${(type || "lawyer").toLowerCase()}/${randomBytes}`;
+
       setLoading(false);
       onSuccess({
         id: `inv-${Date.now()}`,
@@ -47,10 +52,15 @@ export function CreateInviteModal({ isOpen, onClose, onSuccess }: CreateInviteMo
         roleName,
         status: "PENDING",
         expiresAt: "2026-09-30",
-        publicUrl: `http://localhost:3000/invite/inv-token-${Date.now()}`,
+        publicUrl,
       });
       onClose();
     } catch (err) {
+      const randomBytes = Array.from(crypto.getRandomValues(new Uint8Array(24)))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      const publicUrl = `https://otaibi-law.legalos.sa/i/${(type || "lawyer").toLowerCase()}/${randomBytes}`;
+
       setLoading(false);
       onSuccess({
         id: `inv-${Date.now()}`,
@@ -61,7 +71,7 @@ export function CreateInviteModal({ isOpen, onClose, onSuccess }: CreateInviteMo
         roleName,
         status: "PENDING",
         expiresAt: "2026-09-30",
-        publicUrl: `http://localhost:3000/invite/inv-token-${Date.now()}`,
+        publicUrl,
       });
       onClose();
     }

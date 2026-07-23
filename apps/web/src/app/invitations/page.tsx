@@ -41,7 +41,7 @@ export default function InvitationsControlCenterPage() {
       expiresAt: "2026-09-30",
       channel: "SMS",
       createdAt: "2026-07-20",
-      publicUrl: "http://localhost:3000/invite/inv-token-101",
+      publicUrl: "https://otaibi-law.legalos.sa/i/lawyer/4XJ8P6NKV9Q2MRT7YW69A8B7C6D5E4F3",
     },
     {
       id: "inv-102",
@@ -54,7 +54,7 @@ export default function InvitationsControlCenterPage() {
       expiresAt: "2026-08-15",
       channel: "LINK",
       createdAt: "2026-07-22",
-      publicUrl: "http://localhost:3000/invite/inv-token-102",
+      publicUrl: "https://otaibi-law.legalos.sa/i/lawyer/9K2P8W7M5X4N3V6T8R1Y0Z9A8B7C6D5E",
     },
     {
       id: "inv-103",
@@ -67,7 +67,7 @@ export default function InvitationsControlCenterPage() {
       expiresAt: "2026-08-01",
       channel: "WHATSAPP",
       createdAt: "2026-07-23",
-      publicUrl: "http://localhost:3000/invite/inv-token-103",
+      publicUrl: "https://otaibi-law.legalos.sa/i/client/3V6T8R1Y0Z9A8B7C6D5E4F3G2H1J0K9L",
     },
   ]);
 
