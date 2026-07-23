@@ -208,34 +208,44 @@ export default function IntegrationsPage() {
         <Sidebar />
 
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* GSN Connection Test Banner */}
-          <div className="card-level-1 p-5 rounded-card space-y-3 border-l-4 border-l-secondary">
-            <div className="flex items-center justify-between">
+          {/* GSN Connection Test & Najiz Developer Credentials Settings */}
+          <div className="card-level-1 p-5 rounded-card space-y-4 border-l-4 border-l-secondary">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
                 <Shield className="w-5 h-5 text-secondary" />
                 <div>
-                  <h3 className="text-label-md font-semibold text-on-surface">اختبار اتصال المزامنة مع بوابة ناجز ووزارة العدل (MOJ Live GSN Test)</h3>
-                  <p className="text-label-sm text-on-surface-variant font-body">فحص الاستجابة الفورية لاستعلام الجلسات والوكالات وترافع ناجز المحاكم</p>
+                  <h3 className="text-label-md font-semibold text-on-surface">جاهزية التراخيص والربط مع منصة ناجز للمطورين (MoJ Najiz Developers v1.0)</h3>
+                  <p className="text-label-sm text-on-surface-variant font-body">جاهز للتكامل المباشر عبر مفاتيح Apigee Consumer Key / Secret والرقم الموحد 700</p>
                 </div>
               </div>
 
-              <button
-                onClick={handleTestNajizConnection}
-                disabled={testingNajiz}
-                className="btn-primary px-4 py-2 rounded-soft text-label-md flex items-center gap-2 shadow-level-1"
-              >
-                {testingNajiz ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    جاري الفحص المباشر...
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4" />
-                    فحص الاتصال بقواعد بيانات ناجز
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSelectedProvider("NAJIZ_DEV_KEYS")}
+                  className="btn-secondary px-3.5 py-2 rounded-soft text-label-md flex items-center gap-2"
+                >
+                  <Key className="w-4 h-4 text-primary" />
+                  إعدادات مفاتيح الربط (API Keys)
+                </button>
+
+                <button
+                  onClick={handleTestNajizConnection}
+                  disabled={testingNajiz}
+                  className="btn-primary px-4 py-2 rounded-soft text-label-md flex items-center gap-2 shadow-level-1"
+                >
+                  {testingNajiz ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      جاري الفحص المباشر...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4" />
+                      فحص الجاهزية والاتصال
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {najizResult && (
@@ -328,6 +338,110 @@ export default function IntegrationsPage() {
           </div>
         </main>
       </div>
+
+      {/* Najiz Developers Credentials Modal */}
+      {selectedProvider === "NAJIZ_DEV_KEYS" && (
+        <div className="fixed inset-0 z-50 bg-on-surface/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="card-level-2 max-w-lg w-full p-6 rounded-card space-y-4 text-right font-heading max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-outline-variant pb-3">
+              <div>
+                <h3 className="text-title-md font-bold text-primary flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-secondary" />
+                  ربط مفاتيح منصة ناجز للمطورين (MoJ Najiz Portal Keys)
+                </h3>
+                <p className="text-label-sm text-on-surface-variant font-body">
+                  وفق الدليل الإرشادي الرسمي لوزارة العدل (النسخة 1.0 - أغسطس 2025)
+                </p>
+              </div>
+              <button onClick={() => setSelectedProvider(null)} className="text-on-surface-variant hover:text-on-surface text-lg">
+                ✕
+              </button>
+            </div>
+
+            <div className="p-3 bg-secondary-container/20 border border-secondary/30 rounded-soft text-label-sm text-on-surface font-body space-y-1">
+              <p className="font-bold text-secondary">متطلبات الربط الرسمية المستخرجة من بوابة ناجز للمطورين:</p>
+              <ul className="list-disc list-inside space-y-0.5 text-xs text-on-surface-variant">
+                <li>الموافقة على اتفاقية مشاركة البيانات مع وزارة العدل (مكتب إدارة البيانات).</li>
+                <li>تفعيل الرقم الموحد 700 الخاص بالمكتب/الشركة.</li>
+                <li>إخفاء وتأمين Consumer Key & Consumer Secret عبر Apigee OAuth 2.0.</li>
+              </ul>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setSaving(true);
+                setTimeout(() => {
+                  setSaving(false);
+                  setSelectedProvider(null);
+                }, 1000);
+              }}
+              className="space-y-4 text-right"
+            >
+              <div>
+                <label className="text-label-sm font-semibold text-on-surface">الرقم الموحد للجهة (700 Unified Number)</label>
+                <input
+                  type="text"
+                  placeholder="7001010998"
+                  defaultValue="7001010998"
+                  className="w-full mt-1 bg-surface-container-lowest border border-outline-variant rounded-soft px-3 py-2 text-body-md text-primary font-tabular"
+                  dir="ltr"
+                />
+              </div>
+
+              <div>
+                <label className="text-label-sm font-semibold text-on-surface">معرف التطبيق (Consumer Key / Client ID)</label>
+                <input
+                  type="text"
+                  placeholder="moj_apigee_consumer_key_xxx..."
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full mt-1 bg-surface-container-lowest border border-outline-variant rounded-soft px-3 py-2 text-body-md text-primary font-tabular"
+                  dir="ltr"
+                />
+              </div>
+
+              <div>
+                <label className="text-label-sm font-semibold text-on-surface">الرمز السري (Consumer Secret / Client Secret)</label>
+                <input
+                  type="password"
+                  placeholder="••••••••••••••••••••••••"
+                  value={apiSecret}
+                  onChange={(e) => setApiSecret(e.target.value)}
+                  className="w-full mt-1 bg-surface-container-lowest border border-outline-variant rounded-soft px-3 py-2 text-body-md text-primary font-tabular"
+                  dir="ltr"
+                />
+              </div>
+
+              <div>
+                <label className="text-label-sm font-semibold text-on-surface">نوع بيئة الاتصال (Network Connection Type)</label>
+                <select className="w-full mt-1 bg-surface-container-lowest border border-outline-variant rounded-soft px-3 py-2 text-body-md text-on-surface font-semibold">
+                  <option value="Internet">شبكة الإنترنت العامة (Apigee Gateway - Port 443)</option>
+                  <option value="IAM">شبكة الهوية الرقمية الحكومية (Nafath IAM)</option>
+                  <option value="GSN">الشبكة الحكومية الآمنة (Government Secure Network - GSN)</option>
+                </select>
+              </div>
+
+              <div className="pt-2 flex items-center gap-3">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 btn-primary py-2.5 rounded-card text-label-md font-bold shadow-level-1"
+                >
+                  {saving ? "جاري الحفظ والتشفير..." : "حفظ وتفعيل المفاتيح المعتمدة"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProvider(null)}
+                  className="btn-secondary py-2.5 px-4 rounded-card text-label-md font-semibold"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

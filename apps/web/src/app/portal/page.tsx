@@ -346,15 +346,15 @@ export default function ClientPortalPage() {
   return (
     <div className="min-h-screen bg-surface text-on-surface flex flex-col font-heading" dir="rtl">
       {/* Dynamic Multi-Tenant White-Label Header */}
-      <header className="sticky top-0 z-50 bg-surface-container-lowest border-b border-outline-variant shadow-level-1 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-card bg-primary text-on-primary font-bold flex items-center justify-center text-lg shadow-level-1 shrink-0">
+      <header className="sticky top-0 z-40 bg-surface-container-lowest border-b border-outline-variant shadow-level-1 px-4 md:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 md:w-11 md:h-11 rounded-card bg-primary text-on-primary font-bold flex items-center justify-center text-base md:text-lg shadow-level-1 shrink-0">
             {selectedFirm.logoText}
           </div>
           <div>
-            <h1 className="text-title-md font-bold text-primary flex items-center gap-2">
+            <h1 className="text-title-sm md:text-title-md font-bold text-primary flex flex-wrap items-center gap-1.5">
               بوابة الموكلين التفاعلية (Client Portal)
-              <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-pill font-body font-bold">
+              <span className="text-[9px] md:text-[10px] bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-pill font-body font-bold">
                 {selectedFirm.badge}
               </span>
             </h1>
@@ -467,7 +467,7 @@ export default function ClientPortalPage() {
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col max-w-[1600px] w-full mx-auto p-4 md:p-6 space-y-6">
+        <div className="flex-1 flex flex-col max-w-[1600px] w-full mx-auto p-4 md:p-6 space-y-6 pb-28 md:pb-10">
           {/* Client Dashboard Greeting & Quick Stats Bar */}
           <div className="card-level-1 p-6 rounded-card bg-gradient-to-r from-surface-container-lowest via-surface-container-low to-surface-container-lowest border border-outline-variant flex flex-wrap items-center justify-between gap-6 shadow-level-1">
             <div className="space-y-1">
@@ -495,8 +495,8 @@ export default function ClientPortalPage() {
           </div>
 
           {/* Core Navigation Bar for Client Workspace Modules */}
-          <div className="bg-surface-container-lowest p-2 rounded-card border border-outline-variant shadow-level-1 overflow-x-auto">
-            <div className="flex items-center gap-2 min-w-max">
+          <div className="bg-surface-container-lowest p-2 rounded-card border border-outline-variant shadow-level-1 overflow-x-auto no-scrollbar scrollbar-none">
+            <div className="flex items-center gap-1.5 md:gap-2 min-w-max">
               {[
                 { id: "overview", label: "اللوحة التفاعلية والعمل الجماعي", icon: Scale },
                 { id: "cases", label: "تتبع مسار القضايا (Case Tracking)", icon: BriefcaseIcon },
@@ -512,7 +512,7 @@ export default function ClientPortalPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-soft text-label-md transition-all font-semibold ${
+                    className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-soft text-xs md:text-label-md transition-all font-semibold whitespace-nowrap ${
                       isActive
                         ? "bg-primary text-on-primary shadow-level-1"
                         : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
@@ -1150,7 +1150,7 @@ export default function ClientPortalPage() {
       {/* Electronic Signature Modal */}
       {signModalOpen && (
         <div className="fixed inset-0 z-50 bg-on-surface/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="card-level-2 max-w-md w-full p-6 rounded-card space-y-4 text-right font-heading">
+          <div className="card-level-2 max-w-md w-full p-6 rounded-card space-y-4 text-right font-heading max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-outline-variant pb-2">
               <h3 className="text-title-md font-bold text-primary flex items-center gap-2">
                 <Edit3 className="w-5 h-5 text-primary" />
@@ -1189,7 +1189,7 @@ export default function ClientPortalPage() {
       {/* E-Payment Gateway Modal */}
       {payModalOpen && (
         <div className="fixed inset-0 z-50 bg-on-surface/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="card-level-2 max-w-md w-full p-6 rounded-card space-y-4 text-right font-heading">
+          <div className="card-level-2 max-w-md w-full p-6 rounded-card space-y-4 text-right font-heading max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-outline-variant pb-2">
               <h3 className="text-title-md font-bold text-primary flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-primary" />
@@ -1251,7 +1251,7 @@ export default function ClientPortalPage() {
       {/* Quick Client Request Modal */}
       {requestModalOpen && (
         <div className="fixed inset-0 z-50 bg-on-surface/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="card-level-2 max-w-md w-full p-6 rounded-card space-y-4 text-right font-heading">
+          <div className="card-level-2 max-w-md w-full p-6 rounded-card space-y-4 text-right font-heading max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-outline-variant pb-2">
               <h3 className="text-title-md font-bold text-primary flex items-center gap-2">
                 <Plus className="w-5 h-5 text-primary" />

@@ -13,7 +13,7 @@ export function FloatingActionButton({ onOpenScanner, onOpenVoice }: FABProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="md:hidden fixed bottom-16 left-4 z-40 flex flex-col items-end">
+    <div className="md:hidden fixed bottom-20 left-4 z-40 flex flex-col items-start">
       {/* Quick Action Popup Menu */}
       {isOpen && (
         <div className="mb-3 flex flex-col gap-2.5 items-end animate-in slide-in-from-bottom-4 duration-200">
