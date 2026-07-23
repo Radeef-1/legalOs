@@ -12,6 +12,8 @@ import { InvitationsService } from './invitations/invitations.service';
 import { InvitationsController } from './invitations/invitations.controller';
 import { SettingsService } from './settings/settings.service';
 import { SettingsController } from './settings/settings.controller';
+import { OnboardingService } from './onboarding/onboarding.service';
+import { OnboardingController } from './onboarding/onboarding.controller';
 
 @Module({
   imports: [PrismaModule],
@@ -22,6 +24,7 @@ import { SettingsController } from './settings/settings.controller';
     MembersController,
     InvitationsController,
     SettingsController,
+    OnboardingController,
   ],
   providers: [
     BranchesService,
@@ -30,6 +33,7 @@ import { SettingsController } from './settings/settings.controller';
     MembersService,
     InvitationsService,
     SettingsService,
+    OnboardingService,
   ],
   exports: [
     BranchesService,
@@ -38,6 +42,7 @@ import { SettingsController } from './settings/settings.controller';
     MembersService,
     InvitationsService,
     SettingsService,
+    OnboardingService,
   ],
 })
 export class WorkspaceModule {}

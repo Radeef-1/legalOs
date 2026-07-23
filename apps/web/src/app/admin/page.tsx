@@ -186,8 +186,66 @@ export default function AdminControlCenterPage() {
     }, 1200);
   };
 
+  const [verificationApplications, setVerificationApplications] = useState<any[]>([
+    {
+      id: "app-aladl-02",
+      firmNameAr: "مكتب العدل والتميز للمحاماة",
+      firmNameEn: "Al-Adl & Excellence Law Office",
+      entityType: "مكتب محاماة فردي",
+      lawyersCount: 5,
+      city: "جدة",
+      mojLicenseNumber: "449019283",
+      crNumber700: "7009988112",
+      vatNumber: "300998112300003",
+      partnerFullName: "أ. عبد العزيز الغامدي",
+      partnerNationalId: "1019283746",
+      adminEmail: "sara@aladl-law.sa",
+      submittedAt: "قبل 4 ساعات",
+      status: "PENDING_REVIEW",
+      reviewNotes: "بانتظار التأكد من مطابقة الختم الرسمي وتاريخ ترخيص وزارة العدل.",
+    },
+    {
+      id: "app-salman-01",
+      firmNameAr: "مكتب السلمان للمحاماة والاستشارات القانونية",
+      firmNameEn: "Salman Law Firm",
+      entityType: "شركة مهنية للمحاماة",
+      lawyersCount: 12,
+      city: "الرياض",
+      mojLicenseNumber: "449810293",
+      crNumber700: "7001010998",
+      vatNumber: "310928374100003",
+      partnerFullName: "د. عبد الله بن سلمان العتيبي",
+      partnerNationalId: "1092837412",
+      adminEmail: "fahad@salman-law.sa",
+      submittedAt: "منذ 5 أيام",
+      status: "APPROVED",
+      reviewNotes: "تم التحقق التلقائي من وزارة العدل والسجل التجاري 700 والاعتماد الفوري.",
+    },
+  ]);
+
+  const handleApproveFirm = (id: string) => {
+    setVerificationApplications((prev) =>
+      prev.map((app) => (app.id === id ? { ...app, status: "APPROVED", reviewNotes: "تم اعتماد المكتب وتفعيل الـ Tenant تلقائياً 🟢" } : app))
+    );
+    alert("تم قبول واعتماد مكتب المحاماة وتأمين بيئة الـ Tenant والتخزين المشفر بنجاح!");
+  };
+
+  const handleRejectFirm = (id: string) => {
+    setVerificationApplications((prev) =>
+      prev.map((app) => (app.id === id ? { ...app, status: "REJECTED", reviewNotes: "تم رفض الطلب لعدم مطابقة بيانات ترخيص وزارة العدل." } : app))
+    );
+  };
+
+  const handleRequestMoreDocs = (id: string) => {
+    setVerificationApplications((prev) =>
+      prev.map((app) => (app.id === id ? { ...app, status: "DOCUMENTS_UPLOADED", reviewNotes: "مطلوب إضافة نسخة الختم الرسمي والهوية المحدثة." } : app))
+    );
+    alert("تم إرسال إشعار للمكتب لرفع مستندات إضافية لاستكمال التفعيل.");
+  };
+
   const navTabs = [
     { id: "command-center", label: "Executive Command Center", icon: Activity },
+    { id: "verification-queue", label: "Firm Verification Queue (اعتماد المكاتب)", icon: ShieldCheck },
     { id: "tenants", label: "Organizations & Tenants", icon: Building2 },
     { id: "identity", label: "Identity, Security & ABAC", icon: Key },
     { id: "ai-center", label: "AI Center & Guardrails", icon: Bot },
@@ -302,6 +360,121 @@ export default function AdminControlCenterPage() {
         </header>
 
         <main className="flex-1 p-6 md:p-8 space-y-6 max-w-[1600px] w-full mx-auto">
+
+          {/* Module 0: Firm Verification & Activation Approval Queue */}
+          {activeTab === "verification-queue" && (
+            <div className="space-y-6">
+              <div className="card-level-1 p-6 rounded-card border border-outline-variant space-y-4 shadow-level-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck className="w-6 h-6 text-primary" />
+                    <div>
+                      <h2 className="text-title-md font-bold text-primary">
+                        قائمة مراجعة وتدقيق المكاتب والشركات الجديدة (Firm Verification Queue)
+                      </h2>
+                      <p className="text-label-sm text-on-surface-variant font-body">
+                        نموذج Stripe Atlas / Shopify Plus المخصص للسوق السعودي والامتثال لوزارة العدل و ZATCA
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => router.push("/onboarding")}
+                    className="btn-primary py-2 px-4 rounded-soft text-label-md flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    محاكاة تسجيل مكتب جديد (Onboarding Wizard)
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {verificationApplications.map((app) => (
+                    <div
+                      key={app.id}
+                      className="p-5 rounded-card bg-surface-container-lowest border border-outline-variant space-y-4 shadow-level-1"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-title-md font-bold text-primary">{app.firmNameAr}</h3>
+                            <span className="text-xs text-on-surface-variant font-tabular">({app.firmNameEn})</span>
+                            <span className="text-label-sm bg-primary/10 text-primary px-2.5 py-0.5 rounded-pill font-bold">
+                              {app.entityType}
+                            </span>
+                          </div>
+                          <p className="text-label-sm text-on-surface-variant font-body mt-0.5">
+                            المقر: {app.city} | عدد المحامين والموظفين: {app.lawyersCount} | التقديم: {app.submittedAt}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`text-label-sm px-3 py-1 rounded-pill font-bold ${
+                            app.status === "APPROVED"
+                              ? "bg-emerald-500/10 text-emerald-700 border border-emerald-500/20"
+                              : app.status === "PENDING_REVIEW"
+                              ? "bg-amber-500/10 text-amber-700 border border-amber-500/20"
+                              : "bg-error/10 text-error border border-error/20"
+                          }`}
+                        >
+                          {app.status === "APPROVED"
+                            ? "تم الاعتماد والتفعيل 🟢"
+                            : app.status === "PENDING_REVIEW"
+                            ? "بانتظار تدقيق الإدارة ⏳"
+                            : "طلب مستندات إضافية 🟡"}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 bg-surface-container-low rounded-card text-label-sm font-tabular">
+                        <div>
+                          <span className="text-on-surface-variant font-body block text-[11px]">ترخيص وزارة العدل:</span>
+                          <span className="font-bold text-primary">{app.mojLicenseNumber}</span>
+                        </div>
+                        <div>
+                          <span className="text-on-surface-variant font-body block text-[11px]">السجل التجاري 700:</span>
+                          <span className="font-bold text-primary">{app.crNumber700}</span>
+                        </div>
+                        <div>
+                          <span className="text-on-surface-variant font-body block text-[11px]">الرقم الضريبي VAT:</span>
+                          <span className="font-bold text-secondary">{app.vatNumber}</span>
+                        </div>
+                        <div>
+                          <span className="text-on-surface-variant font-body block text-[11px]">الشريك المسؤول:</span>
+                          <span className="font-bold text-on-surface font-body">{app.partnerFullName}</span>
+                        </div>
+                      </div>
+
+                      <p className="text-label-sm text-on-surface-variant font-body bg-surface-container-high/40 p-2.5 rounded-soft">
+                        <strong>ملاحظات المراجعة:</strong> {app.reviewNotes}
+                      </p>
+
+                      {app.status === "PENDING_REVIEW" && (
+                        <div className="flex items-center gap-2 pt-2 border-t border-outline-variant">
+                          <button
+                            onClick={() => handleApproveFirm(app.id)}
+                            className="btn-primary py-2 px-4 rounded-soft text-label-sm bg-emerald-700 hover:bg-emerald-800 font-bold"
+                          >
+                            ✓ قبول واعتماد المكتب وتفعيل الـ Tenant
+                          </button>
+                          <button
+                            onClick={() => handleRequestMoreDocs(app.id)}
+                            className="btn-secondary py-2 px-4 rounded-soft text-label-sm font-semibold"
+                          >
+                            طلب مستندات إضافية
+                          </button>
+                          <button
+                            onClick={() => handleRejectFirm(app.id)}
+                            className="btn-secondary py-2 px-4 rounded-soft text-label-sm text-error hover:bg-error/10 font-semibold"
+                          >
+                            رفض الطلب
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Module 1: Executive Command Center */}
           {activeTab === "command-center" && (
