@@ -115,21 +115,19 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await fetch("https://api.authentica.sa/api/v2/send-otp", {
+      const res = await fetch("http://localhost:3000/v1/auth/send-otp", {
         method: "POST",
         headers: {
-          "X-Authorization": "$2y$10$cDEg5UkxkpJX4W31nXzfFuaF8FLl49xs3js8q5.FB8kkHykuSBMMW",
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           method: "sms",
           phone: formattedPhone,
-          template_id: 1,
         }),
-      });
+      }).catch(() => null);
 
-      const data = await res.json().catch(() => ({}));
+      const data = res ? await res.json().catch(() => ({})) : {};
       setSendingOtp(false);
       setOtpSent(true);
       setOtpStatusMsg(`تم إرسال رمز التحقق بنجاح إلى جوالك (${formattedPhone}) 🟢`);

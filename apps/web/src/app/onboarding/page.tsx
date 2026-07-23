@@ -149,28 +149,26 @@ export default function FirmOnboardingPage() {
     }
 
     try {
-      const res = await fetch("https://api.authentica.sa/api/v2/send-otp", {
+      const res = await fetch("http://localhost:3000/v1/auth/send-otp", {
         method: "POST",
         headers: {
-          "X-Authorization": "$2y$10$cDEg5UkxkpJX4W31nXzfFuaF8FLl49xs3js8q5.FB8kkHykuSBMMW",
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           method: otpMethod,
           phone: formattedPhone,
-          template_id: 1,
         }),
-      });
+      }).catch(() => null);
 
-      const data = await res.json().catch(() => ({}));
+      const data = res ? await res.json().catch(() => ({})) : {};
       setSendingOtp(false);
 
-      if (res.ok && data.success) {
+      if (res && res.ok && data.success) {
         setOtpSent(true);
         setOtpStatusMsg(`تم إرسال رمز التحقق بنجاح إلى جوالك (${formattedPhone}) عبر ${otpMethod === "sms" ? "رسالة SMS" : "الواتساب"} 🟢`);
       } else {
-        setOtpStatusMsg(`تنبيه التوثيق: ${data.message || "تم إرسال رمز التحقق لجوالك."}`);
+        setOtpStatusMsg(`تنبيه التوثيق: ${data?.message || "تم إرسال رمز التحقق لجوالك."}`);
       }
     } catch (err: any) {
       setSendingOtp(false);
@@ -193,10 +191,9 @@ export default function FirmOnboardingPage() {
     }
 
     try {
-      const res = await fetch("https://api.authentica.sa/api/v2/verify-otp", {
+      const res = await fetch("http://localhost:3000/v1/auth/verify-otp", {
         method: "POST",
         headers: {
-          "X-Authorization": "$2y$10$cDEg5UkxkpJX4W31nXzfFuaF8FLl49xs3js8q5.FB8kkHykuSBMMW",
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
@@ -204,12 +201,12 @@ export default function FirmOnboardingPage() {
           phone: formattedPhone,
           otp: formData.otpCode.trim(),
         }),
-      });
+      }).catch(() => null);
 
-      const data = await res.json().catch(() => ({}));
+      const data = res ? await res.json().catch(() => ({})) : {};
       setVerifyingOtp(false);
 
-      if (res.ok && data.success) {
+      if (res && res.ok && data.success) {
         setFormData((prev) => ({ ...prev, isOtpVerified: true }));
         setOtpStatusMsg("تم التوثيق والتحقق المباشر من رقم الجوال بنجاح 🟢");
       } else {

@@ -52,8 +52,10 @@ export class PermissionsGuard implements CanActivate {
         },
       });
     } catch (err) {
-      // Soft DB Offline fallback for permissions: allow Partner / Admin
-      return true;
+      throw new ForbiddenException({
+        code: 'PERMISSION_CHECK_FAILED',
+        message: 'عذراً، متعذر التحقق من الصلاحيات الأمنية حالياً.',
+      });
     }
 
     if (!roleWithPermissions) {
