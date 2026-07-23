@@ -11,6 +11,8 @@ import { SaudiComplianceTab } from "@/components/profile/SaudiComplianceTab";
 import { SecurityCenterTab } from "@/components/profile/SecurityCenterTab";
 import { SubscriptionBillingTab } from "@/components/profile/SubscriptionBillingTab";
 import { TrustProfileTab } from "@/components/profile/TrustProfileTab";
+import { PreferencesTab } from "@/components/profile/PreferencesTab";
+import { IntegrationsAiTab } from "@/components/profile/IntegrationsAiTab";
 import {
   Building2,
   ShieldCheck,
@@ -23,6 +25,8 @@ import {
   LayoutDashboard,
   Award,
   TrendingUp,
+  Globe,
+  Sparkles,
 } from "lucide-react";
 
 export default function EnterpriseProfileControlCenterPage() {
@@ -36,7 +40,9 @@ export default function EnterpriseProfileControlCenterPage() {
     { id: "team", label: "إدارة الفريق والصلاحيات والتفويض", icon: Users },
     { id: "compliance", label: "حوكمة الامتثال السعودي (PDPL & MOJ)", icon: ShieldCheck, badge: "100%" },
     { id: "security", label: "مركز الأمان والأجهزة والجلسات", icon: Lock },
+    { id: "integrations-ai", label: "الذكاء الاصطناعي والربط (ZATCA & ناجز)", icon: Sparkles },
     { id: "billing", label: "الباقة، الموارد، والاشتراك", icon: CreditCard },
+    { id: "preferences", label: "تفضيلات المستخدم والنظام", icon: Globe },
     { id: "trust-profile", label: "بطاقة الثقة العامة للمكتب", icon: Share2 },
   ];
 
@@ -110,7 +116,9 @@ export default function EnterpriseProfileControlCenterPage() {
             {activeTab === "team" && <TeamManagementTab />}
             {activeTab === "compliance" && <SaudiComplianceTab />}
             {activeTab === "security" && <SecurityCenterTab />}
+            {activeTab === "integrations-ai" && <IntegrationsAiTab />}
             {activeTab === "billing" && <SubscriptionBillingTab />}
+            {activeTab === "preferences" && <PreferencesTab />}
             {activeTab === "trust-profile" && <TrustProfileTab />}
           </div>
         </main>
