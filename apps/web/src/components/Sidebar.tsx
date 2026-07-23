@@ -68,6 +68,7 @@ export function Sidebar() {
   const mainNavItems = [
     ...(isSuperAdmin ? [{ label: "مركز التشغيل القيادي", path: "/admin", icon: ShieldCheck, badge: "PRO" }] : []),
     { label: activeRole === "lawyer" ? "لوحة المحامي الفردي" : "لوحة التحكم الرئيسية", path: "/", icon: LayoutDashboard },
+    { label: "إدارة المكتب والملف الشخصي", path: "/profile", icon: Building2, badge: "v9" },
     { label: "إدارة القضايا والعملاء", path: "/cases", icon: Briefcase, badge: "حي" },
     { label: "لوحة المهام والإنذارات", path: "/tasks", icon: Kanban },
     { label: "التقويم وجلسات المحاكم", path: "/calendar", icon: Calendar },
