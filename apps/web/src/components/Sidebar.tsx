@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   UserPlus,
   Settings,
+  Compass,
 } from "lucide-react";
 import { CommandKModal } from "./CommandKModal";
 import { useTenant } from "./tenant/TenantProvider";
@@ -38,7 +39,7 @@ export function Sidebar() {
         const parsed = JSON.parse(storedUser);
         if (parsed.firmName) setUserFirmName(parsed.firmName);
         if (parsed.role) setActiveRole(parsed.role);
-        if (parsed.email === "admin@legalos.sa" || parsed.isSuperAdmin) {
+        if (parsed.role === "SUPER_ADMIN" || parsed.email === "admin@legalos.sa") {
           setIsSuperAdmin(true);
         }
       } catch (e) {}
@@ -47,13 +48,16 @@ export function Sidebar() {
 
   const handleRoleChange = (newRole: "admin" | "lawyer" | "client") => {
     setActiveRole(newRole);
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        const parsed = JSON.parse(storedUser);
-        parsed.role = newRole;
-        localStorage.setItem("user", JSON.stringify(parsed));
-      } catch (e) {}
+    localStorage.setItem("userRole", newRole);
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          parsed.role = newRole === "client" ? "CLIENT" : newRole === "lawyer" ? "LAWYER" : "SUPER_ADMIN";
+          localStorage.setItem("user", JSON.stringify(parsed));
+        } catch (e) {}
+      }
     }
     if (newRole === "client") {
       router.push("/portal");
@@ -82,6 +86,7 @@ export function Sidebar() {
 
   const engineNavItems = [
     { label: "المساعد القانوني الذكي", path: "/ai-assistant", icon: Sparkles, badge: "AI" },
+    { label: "منصة التعلم والأكاديمية", path: "/learning", icon: Compass, badge: "DAP" },
     { label: "التقارير وإقرار ZATCA", path: "/reports", icon: BarChart3 },
   ];
 

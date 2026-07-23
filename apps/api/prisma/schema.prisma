@@ -1970,4 +1970,112 @@ model InvitationTemplate {
   @@map("invitation_templates")
 }
 
+model LearningTutorial {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  title       String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(100)
+  description String   @db.Text
+  module      String   @db.VarChar(50)
+  role        String   @default("ALL") @db.VarChar(50)
+  difficulty  String   @default("EASY") @db.VarChar(20)
+  duration    String   @default("2 mins") @db.VarChar(50)
+  language    String   @default("ar") @db.VarChar(10)
+  status      String   @default("PUBLISHED") @db.VarChar(20)
+  version     Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  steps    LearningStep[]
+  progress UserTutorialProgress[]
+
+  @@map("learning_tutorials")
+}
+
+model LearningStep {
+  id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tutorialId     String   @map("tutorial_id") @db.Uuid
+  order          Int
+  selector       String   @db.VarChar(255)
+  title          String   @db.VarChar(255)
+  description    String   @db.Text
+  position       String   @default("bottom") @db.VarChar(50)
+  animation      String   @default("fade") @db.VarChar(50)
+  actionRequired String?  @map("action_required") @db.VarChar(100)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  tutorial LearningTutorial @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+
+  @@index([tutorialId], map: "idx_learning_steps_tutorial")
+  @@map("learning_steps")
+}
+
+model UserTutorialProgress {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  tutorialId  String    @map("tutorial_id") @db.Uuid
+  completed   Boolean   @default(false)
+  lastStep    Int       @default(1) @map("last_step")
+  startedAt   DateTime  @default(now()) @map("started_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  durationSec Int       @default(0) @map("duration_sec")
+
+  tutorial LearningTutorial @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_learning_progress_user")
+  @@index([tutorialId], map: "idx_learning_progress_tutorial")
+  @@map("user_tutorial_progress")
+}
+
+model ContextualTooltip {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  selector  String   @unique @db.VarChar(255)
+  title     String   @db.VarChar(255)
+  content   String   @db.Text
+  module    String   @db.VarChar(50)
+  language  String   @default("ar") @db.VarChar(10)
+  role      String   @default("ALL") @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("contextual_tooltips")
+}
+
+model OnboardingChecklist {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  stepKey        String    @map("step_key") @db.VarChar(100)
+  completed      Boolean   @default(false)
+  completedBy    String?   @map("completed_by") @db.Uuid
+  completedAt    DateTime? @map("completed_at") @db.Timestamptz
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([organizationId], map: "idx_onboarding_checklist_org")
+  @@map("onboarding_checklists")
+}
+
+model LearningVideo {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  title       String   @db.VarChar(255)
+  url         String   @db.VarChar(500)
+  thumbnail   String?  @db.VarChar(500)
+  duration    String   @default("5 mins") @db.VarChar(50)
+  module      String   @db.VarChar(50)
+  language    String   @default("ar") @db.VarChar(10)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("learning_videos")
+}
+
+model KnowledgeArticle {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  title     String   @db.VarChar(255)
+  slug      String   @unique @db.VarChar(100)
+  content   String   @db.Text
+  tags      String[]
+  module    String   @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("knowledge_articles")
+}
+
+
 

@@ -29,6 +29,7 @@ import { AiModule } from './ai/ai.module';
 import { AdminControlModule } from './admin/admin-control.module';
 import { InvitationsModule } from './invitations/invitations.module';
 import { TenantModule } from './tenant/tenant.module';
+import { LearningModule } from './learning/learning.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { TenantModule } from './tenant/tenant.module';
     AdminControlModule,
     InvitationsModule,
     TenantModule,
+    LearningModule,
   ],
   controllers: [AppController],
   providers: [
