@@ -252,7 +252,27 @@ export default function FirmOnboardingPage() {
   }, [formData]);
 
   const handleNextStep = () => {
-    if (currentStep < 18) {
+    // STAGE 1 MANDATORY SECURITY CHECK: Block Next if OTP is NOT verified!
+    if (currentStep === 1) {
+      if (!formData.fullName || !formData.email || !formData.mobile) {
+        alert("يرجى تعبئة كافة بيانات الحساب أولاً (الاسم الكامل، البريد الإلكتروني، ورقم الجوال).");
+        return;
+      }
+      if (!formData.isOtpVerified) {
+        alert("⛔ شرط إلزامي وأمني: يجب الضغط على 'أرسل رمز OTP الجوال' وإدخال الرمز والتأكيد المباشر عبر بوابة Authentica.sa قبل الانتقال للخطوة التالية.");
+        return;
+      }
+    }
+
+    // STAGE 2 VALIDATION
+    if (currentStep === 2) {
+      if (!formData.firmNameAr || !formData.mojLicenseNumber || !formData.crNumber700) {
+        alert("يرجى إدخال اسم المكتب الرسمي، رقم ترخيص وزارة العدل، والرقم الموحد 700.");
+        return;
+      }
+    }
+
+    if (currentStep < 5) {
       const next = currentStep + 1;
       setCurrentStep(next);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -295,7 +315,24 @@ export default function FirmOnboardingPage() {
   };
 
   // Calculate Progress Percent
-  const progressPercent = Math.round((currentStep / 18) * 100);
+  const getStepTitle = (step: number) => {
+    switch (step) {
+      case 1:
+        return "إنشاء الحساب والتحقق من الجوال (OTP)";
+      case 2:
+        return "بيانات المكتب وترخيص وزارة العدل والسجل 700";
+      case 3:
+        return "الحساب البنكي والفوترة الضريبية ZATCA Phase 2";
+      case 4:
+        return "الهوية الوطنية وتوقيع الشريك المدير والامتثال";
+      case 5:
+        return "المراجعة واختيار الباقة والاعتماد الفوري";
+      default:
+        return "إعدادات الاعتماد والتوثيق";
+    }
+  };
+
+  const progressPercent = Math.round((currentStep / 5) * 100);
 
   return (
     <div className="min-h-screen bg-surface text-on-surface flex flex-col font-heading" dir="rtl">
@@ -341,7 +378,7 @@ export default function FirmOnboardingPage() {
             <div className="flex items-center gap-2">
               <Award className="w-5 h-5 text-primary" />
               <span className="text-title-md font-bold text-primary">
-                المرحلة {currentStep} من 18:
+                المرحلة {currentStep} من 5:
               </span>
               <span className="text-body-md font-semibold text-on-surface">
                 {getStepTitle(currentStep)}
@@ -361,8 +398,8 @@ export default function FirmOnboardingPage() {
           </div>
 
           {/* Stepper Dots Indicator */}
-          <div className="flex items-center justify-between pt-1 overflow-x-auto no-scrollbar gap-1">
-            {Array.from({ length: 18 }).map((_, idx) => {
+          <div className="flex items-center justify-between pt-1 overflow-x-auto no-scrollbar gap-2">
+            {Array.from({ length: 5 }).map((_, idx) => {
               const stepNum = idx + 1;
               const isDone = stepNum < currentStep;
               const isCurrent = stepNum === currentStep;
@@ -1201,15 +1238,15 @@ export default function FirmOnboardingPage() {
             </button>
 
             <span className="text-label-sm font-semibold text-on-surface-variant font-body hidden sm:inline">
-              خطوة {currentStep} من 18 | {getStepTitle(currentStep)}
+              خطوة {currentStep} من 5 | {getStepTitle(currentStep)}
             </span>
 
             <button
               onClick={handleNextStep}
-              disabled={currentStep === 18}
+              disabled={currentStep === 5}
               className="btn-primary py-2.5 px-6 rounded-soft text-label-md flex items-center gap-2 disabled:opacity-40 shadow-level-1"
             >
-              {currentStep === 17 ? "إنهاء المراجعة والتفعيل 🚀" : "التالي"}
+              {currentStep === 4 ? "إنهاء المراجعة والتفعيل 🚀" : "التالي"}
               <ArrowLeft className="w-4 h-4" />
             </button>
           </div>
