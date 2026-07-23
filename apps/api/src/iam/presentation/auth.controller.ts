@@ -15,4 +15,14 @@ export class AuthController {
       data,
     };
   }
+
+  @Post('switch-workspace')
+  @HttpCode(HttpStatus.OK)
+  async switchWorkspace(@Body() body: { userId: string; targetOrganizationId: string }) {
+    const data = await this.authService.switchWorkspace(body.userId, body.targetOrganizationId);
+    return {
+      success: true,
+      data,
+    };
+  }
 }
