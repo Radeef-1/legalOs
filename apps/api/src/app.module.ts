@@ -27,6 +27,7 @@ import { PortalModule } from './portal/portal.module';
 import { ReportsModule } from './reports/reports.module';
 import { AiModule } from './ai/ai.module';
 import { AdminControlModule } from './admin/admin-control.module';
+import { InvitationsModule } from './invitations/invitations.module';
 
 @Module({
   imports: [
@@ -38,18 +39,18 @@ import { AdminControlModule } from './admin/admin-control.module';
     PrismaModule,
     EventsModule,
     PolicyModule,
+    StorageModule,
+    EmailModule,
+    JobsModule,
     IamModule,
+    WorkspaceModule,
     CasesModule,
     CrmModule,
-    StorageModule,
     DocumentsModule,
-    EmailModule,
     NotificationsModule,
     WorkflowModule,
-    WorkspaceModule,
     FinanceModule,
     CalendarModule,
-    JobsModule,
     SearchModule,
     BillingModule,
     IntegrationsModule,
@@ -57,6 +58,7 @@ import { AdminControlModule } from './admin/admin-control.module';
     ReportsModule,
     AiModule,
     AdminControlModule,
+    InvitationsModule,
   ],
   controllers: [AppController],
   providers: [

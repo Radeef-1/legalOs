@@ -15,6 +15,7 @@ import {
   Sparkles,
   Building2,
   ShieldCheck,
+  UserPlus,
 } from "lucide-react";
 import { CommandKModal } from "./CommandKModal";
 
@@ -69,6 +70,7 @@ export function Sidebar() {
     ...(isSuperAdmin ? [{ label: "مركز التشغيل القيادي", path: "/admin", icon: ShieldCheck, badge: "PRO" }] : []),
     { label: activeRole === "lawyer" ? "لوحة المحامي الفردي" : "لوحة التحكم الرئيسية", path: "/", icon: LayoutDashboard },
     { label: "إدارة المكتب والملف الشخصي", path: "/profile", icon: Building2, badge: "v9" },
+    { label: "محرك الدعوات والعضويات", path: "/invitations", icon: UserPlus, badge: "v10" },
     { label: "إدارة القضايا والعملاء", path: "/cases", icon: Briefcase, badge: "حي" },
     { label: "لوحة المهام والإنذارات", path: "/tasks", icon: Kanban },
     { label: "التقويم وجلسات المحاكم", path: "/calendar", icon: Calendar },

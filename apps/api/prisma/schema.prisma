@@ -1877,4 +1877,81 @@ model AiCustomPromptRule {
   @@map("ai_custom_prompt_rules")
 }
 
+model EnterpriseInvitation {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  type           String    @default("LAWYER") @db.VarChar(50)
+  email          String?   @db.VarChar(255)
+  phone          String?   @db.VarChar(50)
+  fullName       String    @map("full_name") @db.VarChar(255)
+  roleName       String    @default("LAWYER") @map("role_name") @db.VarChar(50)
+  workspaceId    String?   @map("workspace_id") @db.Uuid
+  departmentId   String?   @map("department_id") @db.Uuid
+  status         String    @default("PENDING") @db.VarChar(50)
+  expiresAt      DateTime  @map("expires_at") @db.Timestamptz
+  tokenHash      String    @unique @map("token_hash") @db.VarChar(512)
+  otpHash        String?   @map("otp_hash") @db.VarChar(255)
+  channel        String    @default("LINK") @db.VarChar(50)
+  language       String    @default("ar") @db.VarChar(10)
+  createdBy      String    @map("created_by") @db.Uuid
+  acceptedAt     DateTime? @map("accepted_at") @db.Timestamptz
+  lastSentAt     DateTime? @map("last_sent_at") @db.Timestamptz
+  metadata       Json?
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime? @map("updated_at") @db.Timestamptz
+
+  events InvitationEvent[]
+
+  @@index([organizationId], map: "idx_ent_invites_org")
+  @@index([tokenHash], map: "idx_ent_invites_token")
+  @@map("enterprise_invitations")
+}
+
+model InvitationEvent {
+  id           String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  invitationId String   @map("invitation_id") @db.Uuid
+  event        String   @db.VarChar(100)
+  ip           String?  @db.VarChar(100)
+  device       String?  @db.VarChar(255)
+  browser      String?  @db.VarChar(255)
+  country      String?  @db.VarChar(100)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  invitation EnterpriseInvitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId], map: "idx_invitation_events_invite")
+  @@map("invitation_events")
+}
+
+model MembershipRecord {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  roleName       String    @map("role_name") @db.VarChar(50)
+  departmentId   String?   @map("department_id") @db.Uuid
+  workspaceId    String?   @map("workspace_id") @db.Uuid
+  status         String    @default("ACTIVE") @db.VarChar(50)
+  joinedAt       DateTime  @default(now()) @map("joined_at") @db.Timestamptz
+  invitedBy      String?   @map("invited_by") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([organizationId], map: "idx_membership_records_org")
+  @@index([userId], map: "idx_membership_records_user")
+  @@map("membership_records")
+}
+
+model InvitationTemplate {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type      String   @db.VarChar(50)
+  language  String   @default("ar") @db.VarChar(10)
+  channel   String   @db.VarChar(50)
+  subject   String   @db.VarChar(255)
+  body      String   @db.Text
+  variables Json?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("invitation_templates")
+}
+
 

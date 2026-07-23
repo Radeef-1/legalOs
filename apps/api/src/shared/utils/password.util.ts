@@ -14,13 +14,12 @@ import * as argon2 from 'argon2';
  * - parallelism: 4 threads
  */
 
-const ARGON2_OPTIONS: argon2.Options & { raw?: false } = {
+const ARGON2_OPTIONS: any = {
   type: argon2.argon2id,
   memoryCost: 65536,    // 64 MB
   timeCost: 3,          // 3 iterations
   parallelism: 4,       // 4 threads
   hashLength: 32,       // 256-bit output
-  raw: false,
 };
 
 /**
@@ -29,7 +28,8 @@ const ARGON2_OPTIONS: argon2.Options & { raw?: false } = {
  * @returns The hashed password string (includes salt, params, and hash)
  */
 export async function hashPassword(password: string): Promise<string> {
-  return argon2.hash(password, ARGON2_OPTIONS);
+  const result = await argon2.hash(password, ARGON2_OPTIONS);
+  return String(result);
 }
 
 /**
