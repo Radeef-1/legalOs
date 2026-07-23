@@ -16,6 +16,7 @@ import {
   Building2,
   ShieldCheck,
 } from "lucide-react";
+import { CommandKModal } from "./CommandKModal";
 
 export function Sidebar() {
   const router = useRouter();
@@ -237,6 +238,8 @@ export function Sidebar() {
           <span>تسجيل الخروج</span>
         </button>
       </div>
+
+      <CommandKModal />
     </aside>
   );
 }
