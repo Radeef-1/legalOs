@@ -422,9 +422,10 @@ export default function LoginPage() {
 
         {/* Dedicated 1-Click Demo Sign-in Section */}
         <div className="border-t border-outline-variant pt-4 space-y-3">
-          <p className="text-label-sm font-semibold text-primary text-center">
-            ⚡ الدخول السريع للحساب التجريبي المعتمد (Quick 1-Click Demo):
-          </p>
+          <div className="text-label-sm font-semibold text-primary text-center flex items-center justify-center gap-1.5 flex-wrap">
+            <span>⚡ الدخول السريع للحساب التجريبي المعتمد</span>
+            <span className="text-[11px] text-on-surface-variant font-tabular" dir="ltr">(Quick 1-Click Demo)</span>
+          </div>
 
           <button
             type="button"
@@ -433,18 +434,20 @@ export default function LoginPage() {
               setPassword("Demo123456");
               performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو", "مكتب الديمو المعتمد للمحاماة واستشارات القضايا");
             }}
-            className="w-full p-3.5 rounded-card bg-surface-container-low hover:bg-surface-container-high border border-outline-variant flex items-center justify-between text-right transition group shadow-level-1"
+            className="w-full p-3.5 rounded-card bg-surface-container-low hover:bg-surface-container-high border border-primary/30 flex items-center justify-between text-right transition group shadow-level-1"
           >
-            <div>
-              <div className="text-label-md font-bold text-primary flex items-center gap-1.5">
+            <div className="space-y-1">
+              <div className="text-label-md font-bold text-primary flex items-center gap-2">
                 <span>🔑 حساب التجربة الرئيسي (Demo Account)</span>
-                <span className="bg-primary/10 text-primary border border-primary/20 text-[10px] px-2 py-0.5 rounded-pill font-bold">جاهز</span>
+                <span className="bg-secondary/10 text-secondary border border-secondary/20 text-[10px] px-2 py-0.5 rounded-pill font-bold">جاهز</span>
               </div>
-              <div className="text-label-sm text-on-surface-variant font-body mt-0.5">
-                demo@demo22.com | كلمة المرور: Demo123456
+              <div className="text-label-sm text-on-surface-variant font-body flex items-center gap-2 flex-wrap">
+                <span>البريد: <span className="font-tabular font-semibold text-primary" dir="ltr">demo@demo22.com</span></span>
+                <span className="text-outline-variant">•</span>
+                <span>كلمة المرور: <span className="font-tabular font-semibold text-primary" dir="ltr">Demo123456</span></span>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-primary rotate-180 group-hover:translate-x-1 transition" />
+            <ArrowRight className="w-4 h-4 text-primary rotate-180 group-hover:-translate-x-1 transition shrink-0" />
           </button>
 
           <div className="grid grid-cols-1 gap-2">
@@ -453,21 +456,22 @@ export default function LoginPage() {
               return (
                 <button
                   key={firm.id}
+                  type="button"
                   onClick={() => {
                     setEmail(mainLawyer.email);
                     performSessionLogin(mainLawyer.email, mainLawyer.name, firm.name);
                   }}
-                  className="w-full p-2.5 rounded-soft card-interactive flex items-center justify-between text-right text-xs"
+                  className="w-full p-3 rounded-card card-interactive flex items-center justify-between text-right text-xs border border-outline-variant hover:border-primary/40 transition"
                 >
                   <div>
-                    <div className="font-semibold text-on-surface">
+                    <div className="font-semibold text-primary text-label-sm">
                       {firm.name} ({firm.city})
                     </div>
-                    <div className="text-on-surface-variant font-body text-[11px]">
+                    <div className="text-on-surface-variant font-body text-[11px] mt-0.5">
                       المحامي: {mainLawyer.name}
                     </div>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-primary rotate-180 opacity-0 group-hover:opacity-100 transition" />
+                  <ArrowRight className="w-4 h-4 text-primary rotate-180 group-hover:-translate-x-1 transition shrink-0" />
                 </button>
               );
             })}
