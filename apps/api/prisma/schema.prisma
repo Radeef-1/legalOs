@@ -229,6 +229,22 @@ model Organization {
   unifiedNationalNumber  String?            @map("unified_national_number") @db.VarChar(100)
   planTier               PlanTier           @default(solo) @map("plan_tier")
   status                 OrganizationStatus @default(trial)
+  logoUrl                String?            @map("logo_url") @db.VarChar(500)
+  faviconUrl             String?            @map("favicon_url") @db.VarChar(500)
+  primaryColor           String?            @map("primary_color") @db.VarChar(50)
+  secondaryColor         String?            @map("secondary_color") @db.VarChar(50)
+  fontFamily             String?            @map("font_family") @db.VarChar(100)
+  language               String?            @default("ar") @db.VarChar(10)
+  timezone               String?            @default("Asia/Riyadh") @db.VarChar(50)
+  dateFormat             String?            @default("YYYY-MM-DD") @map("date_format") @db.VarChar(50)
+  currency               String?            @default("SAR") @db.VarChar(10)
+  portalDomain           String?            @map("portal_domain") @db.VarChar(255)
+  supportEmail           String?            @map("support_email") @db.VarChar(255)
+  supportPhone           String?            @map("support_phone") @db.VarChar(50)
+  workingHours           String?            @map("working_hours") @db.VarChar(255)
+  theme                  String?            @default("light") @db.VarChar(20)
+  customCss              String?            @map("custom_css") @db.Text
+  settingsJson           Json?              @map("settings_json")
   createdAt              DateTime           @default(now()) @map("created_at") @db.Timestamptz
 
   members                 OrganizationMember[]

@@ -19,12 +19,16 @@ import {
   Settings,
 } from "lucide-react";
 import { CommandKModal } from "./CommandKModal";
+import { useTenant } from "./tenant/TenantProvider";
+import { TenantLogo } from "./tenant/TenantLogo";
+import { TenantTitle } from "./tenant/TenantTitle";
 
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const { tenant } = useTenant();
   const [isSuperAdmin, setIsSuperAdmin] = React.useState(false);
-  const [userFirmName, setUserFirmName] = React.useState("مكتب السلمان للمحاماة");
+  const [userFirmName, setUserFirmName] = React.useState("مكتب العتيبي للمحاماة والاستشارات القانونية والشرعية");
   const [activeRole, setActiveRole] = React.useState<"admin" | "lawyer" | "client">("admin");
 
   React.useEffect(() => {
@@ -96,14 +100,14 @@ export function Sidebar() {
         {/* Tenant Header Info */}
         <div className="p-3.5 rounded-card bg-primary-container/50 border border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-card bg-secondary flex items-center justify-center font-bold text-on-secondary shadow-md shrink-0">
-              <Building2 className="w-5 h-5" />
-            </div>
+            <TenantLogo size="md" />
             <div className="overflow-hidden text-right">
-              <p className="text-sm font-semibold text-white truncate">{userFirmName}</p>
+              <p className="text-sm font-semibold text-white truncate">
+                <TenantTitle fallback={userFirmName} />
+              </p>
               <p className="text-[11px] text-primary-on-container font-body flex items-center gap-1 opacity-70">
                 <ShieldCheck className="w-3 h-3 text-secondary font-bold" />
-                <span>نظام التشغيل القانوني المعتمد</span>
+                <span>نظام التشغيل المعتمد</span>
               </p>
             </div>
           </div>
