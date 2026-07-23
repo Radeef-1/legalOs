@@ -28,9 +28,31 @@ import {
   Globe,
   Sparkles,
 } from "lucide-react";
+import { TenantTitle } from "@/components/tenant/TenantTitle";
 
 export default function EnterpriseProfileControlCenterPage() {
   const [activeTab, setActiveTab] = useState<string>("overview");
+  const [licenseNumber, setLicenseNumber] = useState<string>("SA-LAW-2026-9900");
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("organizationData");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed.licenseNumber) setLicenseNumber(parsed.licenseNumber);
+        } catch (e) {}
+      }
+
+      const handleUpdated = (e: any) => {
+        if (e.detail?.licenseNumber) {
+          setLicenseNumber(e.detail.licenseNumber);
+        }
+      };
+      window.addEventListener("organizationDataUpdated", handleUpdated);
+      return () => window.removeEventListener("organizationDataUpdated", handleUpdated);
+    }
+  }, []);
 
   const tabs = [
     { id: "overview", label: "النظرة العامة وصحة المكتب", icon: LayoutDashboard, badge: "92%" },
@@ -62,7 +84,7 @@ export default function EnterpriseProfileControlCenterPage() {
               </span>
             </h1>
             <p className="text-label-sm text-on-surface-variant font-body">
-              مكتب العتيبي للمحاماة والاستشارات القانونية والشرعية (ترخيص رقم SA-LAW-2026-9900)
+              <TenantTitle fallback="مكتب العتيبي للمحاماة والاستشارات القانونية والشرعية" /> (ترخيص رقم {licenseNumber})
             </p>
           </div>
         </div>

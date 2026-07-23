@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Building2, Save, MapPin, Clock, Scale, FileText } from "lucide-react";
+import { useTenant } from "../tenant/TenantProvider";
 
 export function OrganizationInfoTab() {
+  const { updateTenantSettings } = useTenant();
   const [savedStatus, setSavedStatus] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -45,8 +47,10 @@ export function OrganizationInfoTab() {
           localStorage.setItem("user", JSON.stringify(parsed));
         } catch (e) {}
       }
+      updateTenantSettings({ name: formData.nameAr });
+      window.dispatchEvent(new CustomEvent("organizationDataUpdated", { detail: formData }));
     }
-    setSavedStatus("تم حفظ وحفظ بيانات المنشأة والتعديلات دائمياً 🟢");
+    setSavedStatus("تم حفظ بيانات المنشأة والتعديلات وتحديث الواجهة والسايدبار فوراً 🟢");
     setTimeout(() => setSavedStatus(null), 3000);
   };
 
