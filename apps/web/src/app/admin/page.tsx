@@ -292,6 +292,9 @@ export default function AdminControlCenterPage() {
   const navTabs = [
     { id: "command-center", label: "Executive Command Center", icon: Activity },
     { id: "security-layers", label: "Zero Trust 15-Layer Security (معمارية الأمان)", icon: Lock },
+    { id: "soc-threats", label: "SOC Threat Monitor (مركز رصد التهديدات)", icon: ShieldCheck },
+    { id: "platform-config", label: "Dynamic Configuration (إعدادات بدون كود)", icon: Settings },
+    { id: "customer-success", label: "Customer Success & Firm Health", icon: TrendingUp },
     { id: "verification-queue", label: "Firm Verification Queue (اعتماد المكاتب)", icon: ShieldCheck },
     { id: "tenants", label: "Organizations & Tenants", icon: Building2 },
     { id: "audit-vault", label: "Immutable Audit Vault (سجل التدقيق المحمي)", icon: FileCode },
@@ -518,6 +521,103 @@ export default function AdminControlCenterPage() {
                       </span>
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Module: SOC Cyber Threat Monitor */}
+          {activeTab === "soc-threats" && (
+            <div className="space-y-6">
+              <div className="card-level-1 p-6 rounded-card border border-outline-variant space-y-4 shadow-level-1">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-6 h-6 text-error" />
+                  <div>
+                    <h2 className="text-title-md font-bold text-primary">
+                      مركز رصد التهديدات والأمان السيبراني (SOC Threat Monitor)
+                    </h2>
+                    <p className="text-label-sm text-on-surface-variant font-body">
+                      مراقبة عناوين الـ IP المشبوهة، محاولات الدخول الفاشلة، وحظر الأوامر الخطرة
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-card bg-surface-container-low border border-outline-variant">
+                    <p className="text-xs text-on-surface-variant">التهديدات المرصودة</p>
+                    <p className="text-2xl font-bold text-error">2 تنبيهات حرج</p>
+                  </div>
+                  <div className="p-4 rounded-card bg-surface-container-low border border-outline-variant">
+                    <p className="text-xs text-on-surface-variant">عناوين الـ IP المحظورة</p>
+                    <p className="text-2xl font-bold text-primary">3 عناوين IP</p>
+                  </div>
+                  <div className="p-4 rounded-card bg-surface-container-low border border-outline-variant">
+                    <p className="text-xs text-on-surface-variant">درع الحماية الحصين</p>
+                    <p className="text-2xl font-bold text-emerald-600">ACTIVE SHIELD 🟢</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Module: Dynamic Platform Configuration */}
+          {activeTab === "platform-config" && (
+            <div className="space-y-6">
+              <div className="card-level-1 p-6 rounded-card border border-outline-variant space-y-4 shadow-level-1">
+                <div className="flex items-center gap-3">
+                  <Settings className="w-6 h-6 text-secondary" />
+                  <div>
+                    <h2 className="text-title-md font-bold text-primary">
+                      مركز الإعدادات الديناميكية بدون كود (Zero-Code Platform Config)
+                    </h2>
+                    <p className="text-label-sm text-on-surface-variant font-body">
+                      تعديل مفاتيح وبوابات الـ SMS، مزودي الـ AI، ومفاتيح التخزين المشفر بالوقت الحقيقي
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="p-4 rounded-card bg-surface-container-low border border-outline-variant flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-primary">بوابة الرسائل النصية (Authentica.sa)</p>
+                      <p className="text-xs text-on-surface-variant">https://api.authentica.sa/api/v2</p>
+                    </div>
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-500/10 px-3 py-1 rounded-pill">نشط 🟢</span>
+                  </div>
+                  <div className="p-4 rounded-card bg-surface-container-low border border-outline-variant flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-primary">نموذج الذكاء الاصطناعي الافتراضي</p>
+                      <p className="text-xs text-on-surface-variant">Saudi-Legal-LLM-v2 (مدرب على الأنظمة القضائية)</p>
+                    </div>
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-500/10 px-3 py-1 rounded-pill">نشط 🟢</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Module: Customer Success Platform */}
+          {activeTab === "customer-success" && (
+            <div className="space-y-6">
+              <div className="card-level-1 p-6 rounded-card border border-outline-variant space-y-4 shadow-level-1">
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="w-6 h-6 text-primary" />
+                  <div>
+                    <h2 className="text-title-md font-bold text-primary">
+                      منصة نجاح العملاء وتقييم الصحة (Customer Success & Health Score)
+                    </h2>
+                    <p className="text-label-sm text-on-surface-variant font-body">
+                      تتبع معدل التجديد، احتمالية إلغاء الاشتراك (Churn Risk)، واستخدام المستندات
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-5 rounded-card bg-surface-container-lowest border border-outline-variant space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="font-bold text-primary">مكتب السلمان للمحاماة والاستشارات</p>
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-500/10 px-3 py-1 rounded-pill">صحة المكتب: 94/100 🟢</span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant">الاستخدام الأسبوعي: 48 دخول | القضايا: 184 قضية | احتمالية التجديد: 98%</p>
                 </div>
               </div>
             </div>
