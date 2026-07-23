@@ -57,6 +57,9 @@ export function Sidebar() {
   };
 
   const handleLogout = () => {
+    if (typeof document !== "undefined") {
+      document.cookie = "accessToken=; path=/; max-age=0; SameSite=Lax";
+    }
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
     router.push("/auth/login");

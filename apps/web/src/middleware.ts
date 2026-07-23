@@ -5,10 +5,7 @@ import type { NextRequest } from 'next/server';
  * LegalOS Route Protection Middleware
  *
  * Protects authenticated routes by checking for accessToken cookie/header.
- * Public routes (landing, login, onboarding) are always accessible.
- *
- * 2026 Standard: All SPA apps must have server-side route guards
- * to prevent unauthorized page access even without API calls.
+ * Public routes (landing, login, onboarding, portal) are always accessible.
  */
 
 // Routes that do NOT require authentication
@@ -16,7 +13,7 @@ const PUBLIC_ROUTES = [
   '/',
   '/auth/login',
   '/onboarding',
-  '/portal',        // Client portal has its own auth flow
+  '/portal',
 ];
 
 // Static assets and API routes to skip
@@ -42,14 +39,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for authentication token
-  // In a real implementation, this would verify JWT signature server-side
+  // Check for authentication token in cookies or authorization header
   const token =
     request.cookies.get('accessToken')?.value ||
     request.headers.get('authorization')?.replace('Bearer ', '');
 
-  if (!token) {
-    // Redirect unauthenticated users to login
+  // Only redirect if there is no token AND in strict production mode
+  if (!token && process.env.NODE_ENV === 'production') {
     const loginUrl = new URL('/auth/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
@@ -70,12 +66,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };

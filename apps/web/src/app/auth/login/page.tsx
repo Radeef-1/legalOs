@@ -82,7 +82,11 @@ export default function LoginPage() {
       subdomain: subdomain || "firm-demo",
     };
 
-    localStorage.setItem("accessToken", "demo-token-saudi-legalos-2026");
+    const token = "demo-token-saudi-legalos-2026";
+    if (typeof document !== "undefined") {
+      document.cookie = `accessToken=${token}; path=/; max-age=86400; SameSite=Lax`;
+    }
+    localStorage.setItem("accessToken", token);
     localStorage.setItem("user", JSON.stringify(userObj));
 
     // REDIRECT TARGET: Direct Lawyer Workspace (/cases) or Super Admin (/admin)
