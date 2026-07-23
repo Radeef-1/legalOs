@@ -18,11 +18,17 @@ import {
   Search,
   ArrowRight,
   TrendingUp,
+  Scale,
+  Building2,
+  FileCheck,
+  ShieldCheck,
+  X,
 } from "lucide-react";
 
 export default function LearningAdoptionHubPage() {
   const [activeTab, setActiveTab] = useState<"TOURS" | "ACADEMY" | "DOCS" | "CERTIFICATION">("TOURS");
   const [activeTour, setActiveTour] = useState<any>(null);
+  const [selectedArticle, setSelectedArticle] = useState<any>(null);
 
   const toursList = [
     {
@@ -58,12 +64,95 @@ export default function LearningAdoptionHubPage() {
         { stepIndex: 1, title: "إنشاء دعوة جديدة", description: "اختر نوع الدعوة (محامي، موكل، موظف) وحدد القناة." },
       ],
     },
+    {
+      id: "tour-branding",
+      title: "جولة التخصيص الفوري للهوية (White Label)",
+      description: "طريقة ضبط ألوان المكتب، الشعار، التوقيع، والختم الرسمي بدقة.",
+      duration: "2 دقيقة",
+      stepsCount: 5,
+      steps: [
+        { stepIndex: 1, title: "تغيير الألوان والشعار", description: "حقن متغيرات الـ CSS الفورية وتطبيق الثيم المخصص." },
+      ],
+    },
+    {
+      id: "tour-zatca",
+      title: "جولة المالية وإقرارات ZATCA المرحلة الثانية",
+      description: "خطوات الفوترة الضريبية الإلكترونية وإصدار الفواتير المعتمدة بـ QR Code.",
+      duration: "2.5 دقيقة",
+      stepsCount: 5,
+      steps: [
+        { stepIndex: 1, title: "إصدار الفاتورة الإلكترونية", description: "مزامنة التوقيع الضريبي والربط مع الهيئة." },
+      ],
+    },
+    {
+      id: "tour-portal",
+      title: "جولة تجربة بوابة الموكلين المستقلة",
+      description: "معاينة ما يراه العميل عند استعراض قضاياه وسداد الفواتير أونلاين.",
+      duration: "2 دقيقة",
+      stepsCount: 4,
+      steps: [
+        { stepIndex: 1, title: "بوابة الموكل", description: "واجهة آمنة تمكن الموكل من رفع المستندات ومتابعة الجلسات." },
+      ],
+    },
   ];
 
   const videosList = [
-    { title: "كيف تنشئ قضية وتصنفها حسب المحكمة؟", duration: "3:45", module: "القضايا" },
-    { title: "شرح آلية توثيق OTP ودعوة الموكلين عبر الرسائل النصية", duration: "2:30", module: "الدعوات" },
-    { title: "ربط الفواتير وإقرارات ZATCA الضريبية", duration: "4:15", module: "المالية" },
+    { title: "كيفية تسجيل قضية عمالية ومتابعة جلسات التسوية عبر ناجز وتراضي", duration: "3:45", module: "القضايا العمالية" },
+    { title: "خطوات توثيق وتوليد دعوات المحامين والموكلين المشفرة 32-bit", duration: "2:30", module: "إدارة الدعوات" },
+    { title: "تخصيص الهوية البصرية، الألوان، وترويسة التقارير والختم المعتمد", duration: "4:10", module: "الهوية البصرية" },
+    { title: "استخدام المساعد القانوني الذكي في صياغة العقود ولوائح الاعتراض", duration: "5:00", module: "الذكاء الاصطناعي" },
+  ];
+
+  const knowledgeArticles = [
+    {
+      id: "art-1",
+      title: "دليل الإجراءات الشامل للمحكمة التجارية واللوائح التنفيذية 2026",
+      category: "المحكمة التجارية",
+      readTime: "4 دقائق",
+      tags: ["تجارية", "ناجز", "لوائح"],
+      content: `
+# دليل الإجراءات الشامل للمحكمة التجارية ⚖️
+
+تعد الدعاوى التجارية من أهم ركائز العمل القانوني للمكاتب والشركات في المملكة العربية السعودية.
+
+## خطوات تقديم صحيفة الدعوى التجارية عبر ناجز:
+1. **التحقق من الاختصاص**: التأكد من أن النزاع بين تاجرين أو يتصل بأعمال تجارية مساندة وفق المادة 16 من نظام المحاكم التجارية.
+2. **صياغة المذكرة الجوابية**: تضمين الوقائع، الأسانيد الشرعية والنظامية، وطلبات المدعي المحددة بدقة.
+3. **مراعاة مدد اللائحة التنفيذية**: الالتزام بالمهل المحددة لإيداع المذكرات والاعتراضات (30 يوماً من تاريخ صدور الحكم).
+      `,
+    },
+    {
+      id: "art-2",
+      title: "دليل الامتثال لنظام حماية البيانات الشخصية السعودي (PDPL 2026)",
+      category: "الأمان والامتثال",
+      readTime: "5 دقائق",
+      tags: ["PDPL", "امتثال", "أمان"],
+      content: `
+# دليل الامتثال لنظام حماية البيانات الشخصية (PDPL) 🛡️
+
+يهدف نظام حماية البيانات الشخصية الصادر بالمرسوم الملكي إلى حماية سرية بيانات الموكلين والقضايا.
+
+## التزامات مكتب المحاماة:
+- **التشفير الإجباري**: تشفير سرية وثائق وقضايا الموكلين بأسلوب AES-256 و 32-bit Encrypted Invites.
+- **تحديد الصلاحيات (Least Privilege)**: حصر الاطلاع على الملفات للمحامين المكلفين بالقضية فقط.
+      `,
+    },
+    {
+      id: "art-3",
+      title: "دليل الفواتير الإلكترونية والربط مع هيئة الزكاة (ZATCA Phase 2)",
+      category: "المالية والضريبة",
+      readTime: "3 دقائق",
+      tags: ["ZATCA", "فواتير", "ضريبة"],
+      content: `
+# دليل إقرار الفواتير الإلكترونية ZATCA Phase 2 🧾
+
+ربط الفواتير الصادرة من مكتب المحاماة مع منصة هيئة الزكاة والضريبة والجمارك.
+
+## متطلبات الفاتورة الضريبية المبسطة والمعتمدة:
+1. **رمز الاستجابة السريعة (QR Code)**: تضمين التوقيع الرقمي والـ Hash المشفر.
+2. **الربط المباشر API**: إرسال الإشعار والتسجيل التلقائي للمبيعات والخدمات القانونية.
+      `,
+    },
   ];
 
   return (
@@ -111,7 +200,7 @@ export default function LearningAdoptionHubPage() {
               }`}
             >
               <Compass className="w-4 h-4 text-secondary" />
-              <span>الجولات التفاعلية والدروس المهام</span>
+              <span>الجولات التفاعلية والدروس المهام (Interactive Tours)</span>
             </button>
 
             <button
@@ -135,7 +224,7 @@ export default function LearningAdoptionHubPage() {
               }`}
             >
               <BookOpen className="w-4 h-4 text-blue-500" />
-              <span>مركز المعرفة والتطبيق (Knowledge Docs)</span>
+              <span>مركز المعرفة والأدلة النظامية (Notion Docs)</span>
             </button>
 
             <button
@@ -184,9 +273,9 @@ export default function LearningAdoptionHubPage() {
 
           {/* TAB 2: Video Academy */}
           {activeTab === "ACADEMY" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {videosList.map((video, idx) => (
-                <div key={idx} className="p-4 rounded-card bg-surface-container-lowest border border-outline-variant space-y-3">
+                <div key={idx} className="p-4 rounded-card bg-surface-container-lowest border border-outline-variant space-y-3 shadow-level-1">
                   <div className="w-full h-36 bg-primary/10 rounded-card border border-outline-variant flex items-center justify-center text-primary relative">
                     <PlayCircle className="w-12 h-12 text-secondary opacity-80 hover:opacity-100 transition cursor-pointer" />
                     <span className="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-pill font-tabular">
@@ -202,7 +291,37 @@ export default function LearningAdoptionHubPage() {
             </div>
           )}
 
-          {/* TAB 3: Certifications */}
+          {/* TAB 3: Knowledge Base (Notion Docs) */}
+          {activeTab === "DOCS" && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {knowledgeArticles.map((art) => (
+                <div
+                  key={art.id}
+                  onClick={() => setSelectedArticle(art)}
+                  className="p-5 rounded-card bg-surface-container-lowest border border-outline-variant space-y-3 shadow-level-1 hover:border-secondary transition cursor-pointer"
+                >
+                  <div className="flex items-center justify-between text-xs font-bold text-secondary">
+                    <span>{art.category}</span>
+                    <span className="text-on-surface-variant">{art.readTime}</span>
+                  </div>
+                  <h3 className="text-title-md font-bold text-primary">{art.title}</h3>
+                  <div className="flex gap-1 flex-wrap">
+                    {art.tags.map((tag) => (
+                      <span key={tag} className="text-[10px] bg-surface-container-low text-on-surface-variant px-2 py-0.5 rounded-pill font-bold">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="text-xs text-secondary font-bold flex items-center gap-1 pt-2">
+                    <span>قراءة واستعراض الدليل</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* TAB 4: Certifications */}
           {activeTab === "CERTIFICATION" && (
             <div className="p-8 rounded-card bg-surface-container-lowest border border-outline-variant space-y-6 text-center max-w-2xl mx-auto shadow-level-1">
               <div className="w-16 h-16 rounded-pill bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto">
@@ -222,6 +341,23 @@ export default function LearningAdoptionHubPage() {
           )}
         </main>
       </div>
+
+      {/* Article Viewer Modal */}
+      {selectedArticle && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-card p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto space-y-4 shadow-level-2" dir="rtl">
+            <div className="flex items-center justify-between border-b border-outline-variant pb-3">
+              <h3 className="text-title-md font-bold text-primary">{selectedArticle.title}</h3>
+              <button onClick={() => setSelectedArticle(null)} className="p-1 hover:bg-surface-container-low rounded-soft text-on-surface-variant">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="prose text-body-md text-on-surface whitespace-pre-wrap font-body text-sm leading-relaxed">
+              {selectedArticle.content}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Product Tour Overlay Modal */}
       {activeTour && (
