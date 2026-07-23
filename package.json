@@ -9,6 +9,7 @@
   "scripts": {
     "build": "npm run build --workspace=apps/web",
     "deploy": "wrangler deploy",
+    "start": "npm run start --workspace=apps/web",
     "start:dev": "npm run start:dev --workspace=apps/api",
     "dev:api": "npm run start:dev --workspace=apps/api",
     "dev:web": "npm run dev --workspace=apps/web",
