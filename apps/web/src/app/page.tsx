@@ -74,56 +74,54 @@ export default function EnterpriseLandingPage() {
   return (
     <div className="min-h-screen bg-surface text-on-surface flex flex-col font-heading" dir="rtl">
       {/* 01. Sticky Top Highlights & Value Banner */}
-      <div className="bg-gradient-to-r from-primary via-indigo-900 to-secondary text-on-primary px-4 py-2 text-center text-label-sm font-semibold flex items-center justify-center gap-4 flex-wrap">
-        <span className="flex items-center gap-1">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          دعم اللغة العربية بالكامل 100%
+      <div className="bg-gradient-to-r from-primary via-indigo-900 to-secondary text-on-primary px-3 py-1.5 text-center text-[11px] sm:text-label-sm font-semibold flex items-center justify-center gap-2 sm:gap-4 flex-wrap overflow-hidden">
+        <span className="flex items-center gap-1 shrink-0">
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+          دعم العربية 100%
         </span>
-        <span className="hidden md:inline">•</span>
-        <span className="flex items-center gap-1">
-          <Smartphone className="w-4 h-4 text-cyan-300" />
-          متوافق مع الجوال وتطبيق الـ PWA
+        <span className="hidden sm:inline">•</span>
+        <span className="flex items-center gap-1 shrink-0">
+          <Smartphone className="w-3.5 h-3.5 text-cyan-300" />
+          متوافق مع الجوال الـ PWA
         </span>
-        <span className="hidden md:inline">•</span>
-        <span className="flex items-center gap-1">
-          <ShieldCheck className="w-4 h-4 text-amber-300" />
-          استضافة سحابية آمنة داخل المملكة (امتثال PDPL)
+        <span className="hidden sm:inline">•</span>
+        <span className="hidden md:flex items-center gap-1 shrink-0">
+          <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
+          استضافة سحابية آمنة (امتثال PDPL)
         </span>
       </div>
 
       {/* 02. Navigation Header */}
-      <header className="sticky top-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md border-b border-outline-variant px-6 py-3.5 flex items-center justify-between shadow-level-1">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-card bg-primary text-on-primary font-bold flex items-center justify-center text-lg shadow-level-1 shrink-0">
+      <header className="sticky top-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md border-b border-outline-variant px-3 sm:px-6 py-2.5 flex items-center justify-between shadow-level-1 max-w-full overflow-hidden">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-card bg-primary text-on-primary font-bold flex items-center justify-center text-xs sm:text-lg shadow-level-1 shrink-0">
             LegalOS
           </div>
           <div>
-            <h1 className="text-title-md font-bold text-primary flex items-center gap-2">
-              LegalOS Enterprise
-              <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-pill font-body font-bold">
-                السوق السعودي v5.0
+            <h1 className="text-body-md sm:text-title-md font-bold text-primary flex items-center gap-1.5">
+              <span>LegalOS</span>
+              <span className="hidden sm:inline font-bold">Enterprise</span>
+              <span className="text-[9px] sm:text-[10px] bg-primary/10 text-primary border border-primary/20 px-1.5 sm:px-2 py-0.5 rounded-pill font-body font-bold shrink-0">
+                v5.0
               </span>
             </h1>
-            <p className="text-label-sm text-on-surface-variant font-body hidden sm:block">
-              نظام تشغيل وإدارة مكاتب المحاماة والشركات القانونية
-            </p>
           </div>
         </div>
 
         {/* Quick Action Navigation Links & CTAs */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => router.push("/auth/login")}
-            className="btn-secondary text-label-md py-2 px-4 hover:bg-surface-container-high font-semibold"
+            className="btn-secondary text-xs sm:text-label-md py-1.5 sm:py-2 px-2.5 sm:px-4 hover:bg-surface-container-high font-semibold shrink-0"
           >
             تسجيل الدخول
           </button>
           <button
             onClick={() => router.push("/onboarding")}
-            className="btn-primary text-label-md py-2.5 px-5 rounded-soft shadow-level-1 font-bold flex items-center gap-2"
+            className="btn-primary text-xs sm:text-label-md py-1.5 sm:py-2.5 px-3 sm:px-5 rounded-soft shadow-level-1 font-bold flex items-center gap-1.5 shrink-0"
           >
-            <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-            ابدأ التجربة المجانية (14 يوماً)
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse hidden sm:inline" />
+            <span>تجربة مجانية</span>
           </button>
         </div>
       </header>

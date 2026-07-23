@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SEEDED_FIRMS } from "@/data/seededFirmsData";
-import { ShieldCheck, Building2, User, Key, ArrowRight, Scale, Smartphone, Lock, Globe, CheckCircle2, AlertCircle } from "lucide-react";
+import { ShieldCheck, Building2, User, Key, ArrowRight, Scale, Smartphone, Lock, Globe, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,8 +36,6 @@ export default function LoginPage() {
     if (typeof window !== "undefined") {
       const hostname = window.location.hostname;
       const parts = hostname.split(".");
-
-      // Extract subdomain (e.g. salman-law.seiflden.online or query param ?subdomain=salman-law)
       const querySubdomain = new URLSearchParams(window.location.search).get("subdomain");
       let extracted = querySubdomain || "";
 
@@ -61,7 +59,7 @@ export default function LoginPage() {
     }
   }, []);
 
-  // Session Login Helper
+  // DIRECT SESSION LOGIN REDIRECTION FIX: Go straight to /cases (Lawyer Workspace) or /admin!
   const performSessionLogin = (userEmail: string, userName?: string, firmName?: string) => {
     let matchedLawyer = null;
     let matchedFirm = null;
@@ -78,19 +76,20 @@ export default function LoginPage() {
     const userObj = {
       id: matchedLawyer ? (matchedLawyer as any).id : "u-101",
       email: userEmail,
-      fullName: matchedLawyer ? (matchedLawyer as any).name : userName || "د. عبد الله السلمان",
+      fullName: matchedLawyer ? (matchedLawyer as any).name : userName || "د. عبد الرحمن الديمو",
       jobTitle: matchedLawyer ? (matchedLawyer as any).title : "مستشار قانوني ومحامي ممارس",
-      firmName: matchedFirm ? (matchedFirm as any).name : firmName || detectedTenantName,
-      subdomain: subdomain || "salman-law",
+      firmName: matchedFirm ? (matchedFirm as any).name : firmName || "مكتب الديمو المعتمد للمحاماة",
+      subdomain: subdomain || "firm-demo",
     };
 
     localStorage.setItem("accessToken", "demo-token-saudi-legalos-2026");
     localStorage.setItem("user", JSON.stringify(userObj));
 
+    // REDIRECT TARGET: Direct Lawyer Workspace (/cases) or Super Admin (/admin)
     if (subdomain === "admin" || userEmail.includes("admin")) {
       router.push("/admin");
     } else {
-      router.push("/");
+      router.push("/cases");
     }
   };
 
@@ -128,14 +127,8 @@ export default function LoginPage() {
 
       const data = await res.json().catch(() => ({}));
       setSendingOtp(false);
-
-      if (res.ok && data.success) {
-        setOtpSent(true);
-        setOtpStatusMsg(`تم إرسال رمز التحقق OTP بنجاح إلى جوالك (${formattedPhone}) عبر Authentica.sa 🟢`);
-      } else {
-        setOtpSent(true);
-        setOtpStatusMsg(`تم إرسال رمز التحقق OTP بنجاح إلى جوالك (${formattedPhone}) عبر Authentica.sa 🟢`);
-      }
+      setOtpSent(true);
+      setOtpStatusMsg(`تم إرسال رمز OTP بنجاح إلى جوالك (${formattedPhone}) عبر Authentica.sa 🟢`);
     } catch (err: any) {
       setSendingOtp(false);
       setOtpSent(true);
@@ -153,7 +146,7 @@ export default function LoginPage() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      performSessionLogin("salman.partner@salman-law.sa", "د. عبد الله بن سلمان العتيبي");
+      performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو");
     }, 500);
   };
 
@@ -167,7 +160,7 @@ export default function LoginPage() {
     setNafathPending(true);
     setTimeout(() => {
       setNafathPending(false);
-      performSessionLogin("salman.partner@salman-law.sa", "د. عبد الله بن سلمان العتيبي");
+      performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو");
     }, 1200);
   };
 
@@ -195,7 +188,7 @@ export default function LoginPage() {
         if (resData.success && resData.data) {
           localStorage.setItem("accessToken", resData.data.accessToken);
           localStorage.setItem("user", JSON.stringify(resData.data.user));
-          router.push("/");
+          router.push("/cases");
           return;
         }
       }
@@ -208,33 +201,29 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 md:p-6 font-heading bg-slate-950 text-slate-100 relative overflow-hidden" dir="rtl">
-      {/* Dynamic Background Glow Layer */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-1/4 right-1/4 w-[450px] h-[450px] bg-amber-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="w-full max-w-xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl backdrop-blur-xl">
-        {/* Header Title & Subdomain Context Badge */}
+    <div className="min-h-screen bg-surface text-on-surface flex items-center justify-center p-4 sm:p-6 font-heading" dir="rtl">
+      {/* Container adhering strictly to LegalOS Design System */}
+      <div className="w-full max-w-lg card-level-2 p-6 sm:p-8 rounded-card border border-outline-variant space-y-6 shadow-level-2 bg-surface-container-lowest">
+        
+        {/* Header Section with LegalOS Design Tokens */}
         <div className="text-center space-y-3">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/20 font-bold">
-            <Scale className="w-8 h-8" />
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-card bg-primary text-on-primary flex items-center justify-center mx-auto shadow-level-2">
+            <Scale className="w-7 h-7" />
           </div>
 
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white">
-              بوابة تسجيل الدخول إلى LegalOS
+            <h1 className="text-headline-md sm:text-headline-lg font-bold text-primary">
+              تسجيل الدخول إلى LegalOS
             </h1>
-            <p className="text-sm text-slate-400 mt-1 font-body">
-              منصة إدارة المكاتب القانونية المربوطة مباشرة بـ ناجز و Authentica.sa
+            <p className="text-body-sm sm:text-body-md text-on-surface-variant font-body mt-1">
+              نظام التشغيل الرقمي المعتمد لمكاتب المحاماة والشركات القانونية
             </p>
           </div>
 
           {/* Subdomain Resolution Badge */}
           {subdomain && (
-            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs px-3.5 py-1.5 rounded-full font-mono">
-              <Globe className="w-3.5 h-3.5 text-amber-400" />
+            <div className="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 text-primary text-xs px-3 py-1 rounded-pill font-mono">
+              <Globe className="w-3.5 h-3.5" />
               <span>نطاق المكتب: <strong>{subdomain}.legalos.sa</strong></span>
             </div>
           )}
@@ -242,21 +231,21 @@ export default function LoginPage() {
 
         {/* Error Alert */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-2xl flex items-center gap-2 text-right">
-            <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+          <div className="bg-error-container border border-error/20 text-error-on-container text-label-md px-4 py-3 rounded-card text-right flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* Authentication Mode Tabs */}
-        <div className="flex bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+        {/* Auth Mode Tabs (LegalOS Design System Tokens) */}
+        <div className="flex bg-surface-container-high p-1 rounded-soft border border-outline-variant">
           <button
             type="button"
             onClick={() => setAuthTab("otp")}
-            className={`flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2 px-2.5 rounded-soft text-xs sm:text-label-md font-semibold transition-all flex items-center justify-center gap-1.5 ${
               authTab === "otp"
-                ? "bg-amber-500 text-slate-950 shadow-md"
-                : "text-slate-400 hover:text-white"
+                ? "bg-surface text-primary shadow-level-1"
+                : "text-on-surface-variant hover:text-on-surface"
             }`}
           >
             <Smartphone className="w-4 h-4" />
@@ -266,10 +255,10 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setAuthTab("nafath")}
-            className={`flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2 px-2.5 rounded-soft text-xs sm:text-label-md font-semibold transition-all flex items-center justify-center gap-1.5 ${
               authTab === "nafath"
-                ? "bg-amber-500 text-slate-950 shadow-md"
-                : "text-slate-400 hover:text-white"
+                ? "bg-surface text-primary shadow-level-1"
+                : "text-on-surface-variant hover:text-on-surface"
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
@@ -279,57 +268,57 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setAuthTab("email")}
-            className={`flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2 px-2.5 rounded-soft text-xs sm:text-label-md font-semibold transition-all flex items-center justify-center gap-1.5 ${
               authTab === "email"
-                ? "bg-amber-500 text-slate-950 shadow-md"
-                : "text-slate-400 hover:text-white"
+                ? "bg-surface text-primary shadow-level-1"
+                : "text-on-surface-variant hover:text-on-surface"
             }`}
           >
             <Lock className="w-4 h-4" />
-            <span>البريد وكلمة المرور</span>
+            <span>البريد والرمز</span>
           </button>
         </div>
 
         {/* TAB 1: Mobile OTP via Authentica.sa */}
         {authTab === "otp" && (
           <form onSubmit={handleOtpLogin} className="space-y-4">
-            <div className="space-y-1.5 text-right">
-              <label className="text-xs font-semibold text-slate-300">رقم الجوال المسجل في نفاذ</label>
+            <div className="space-y-1 text-right">
+              <label className="text-label-md text-on-surface-variant">رقم الجوال المسجل في نفاذ</label>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
                   placeholder="0549040268"
-                  className="w-full bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl text-sm font-mono text-left focus:border-amber-500 focus:outline-none"
+                  className="w-full bg-surface-container-low border border-outline-variant px-3 py-2.5 rounded-soft text-body-md text-on-surface font-tabular"
                   dir="ltr"
                 />
                 <button
                   type="button"
                   onClick={handleSendLiveOtp}
                   disabled={sendingOtp}
-                  className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs px-4 py-3 rounded-xl font-bold shrink-0 transition"
+                  className="btn-secondary text-xs px-3 py-2.5 rounded-soft font-bold shrink-0"
                 >
-                  {sendingOtp ? "جاري الإرسال..." : "أرسل الرمز (Authentica)"}
+                  {sendingOtp ? "جاري..." : "أرسل الرمز"}
                 </button>
               </div>
             </div>
 
             {otpStatusMsg && (
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <div className="p-3 rounded-soft bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
                 <span>{otpStatusMsg}</span>
               </div>
             )}
 
-            <div className="space-y-1.5 text-right">
-              <label className="text-xs font-semibold text-slate-300">رمز التحقق المؤقت (OTP)</label>
+            <div className="space-y-1 text-right">
+              <label className="text-label-md text-on-surface-variant">رمز التحقق المؤقت (OTP)</label>
               <input
                 type="text"
                 value={otpCode}
                 onChange={(e) => setOtpCode(e.target.value)}
-                placeholder="أدخل رمز OTP المرسل لجوالك"
-                className="w-full bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl text-sm font-mono text-center tracking-widest focus:border-amber-500 focus:outline-none"
+                placeholder="أدخل رمز OTP"
+                className="w-full bg-surface-container-low border border-outline-variant px-3 py-2.5 rounded-soft text-body-md text-on-surface font-tabular text-center tracking-widest"
                 maxLength={6}
               />
             </div>
@@ -337,10 +326,10 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2"
+              className="w-full btn-primary py-3 rounded-soft text-label-md flex items-center justify-center gap-2 shadow-level-1"
             >
               {loading ? (
-                <span className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+                <span className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
               ) : (
                 "تأكيد الدخول عبر Authentica OTP"
               )}
@@ -351,24 +340,24 @@ export default function LoginPage() {
         {/* TAB 2: Nafath Single Sign-On (Nafath SSO) */}
         {authTab === "nafath" && (
           <form onSubmit={handleNafathLogin} className="space-y-4">
-            <div className="space-y-1.5 text-right">
-              <label className="text-xs font-semibold text-slate-300">رقم الهوية الوطنية / الإقامة</label>
+            <div className="space-y-1 text-right">
+              <label className="text-label-md text-on-surface-variant">رقم الهوية الوطنية / الإقامة</label>
               <input
                 type="text"
                 value={nationalId}
                 onChange={(e) => setNationalId(e.target.value)}
                 placeholder="1092837412"
-                className="w-full bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl text-sm font-mono text-center tracking-widest focus:border-amber-500 focus:outline-none"
+                className="w-full bg-surface-container-low border border-outline-variant px-3 py-2.5 rounded-soft text-body-md text-on-surface font-tabular text-center tracking-widest"
                 maxLength={10}
               />
             </div>
 
-            <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs space-y-2 text-right">
-              <p className="font-semibold flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-blue-400" />
+            <div className="p-3.5 rounded-soft bg-blue-500/10 border border-blue-500/20 text-blue-900 text-xs space-y-1 text-right">
+              <p className="font-semibold flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-blue-600" />
                 تأكيد هوية المحامي عبر تطبيق نفاذ (Nafath SSO)
               </p>
-              <p className="text-blue-400/80 leading-relaxed font-body">
+              <p className="text-body-xs text-blue-800 font-body">
                 سيتم إرسال طلب اعتماد إلى تطبيق نفاذ برقم الموافقة (42). افتح التطبيق وقبل الطلب لإكمال التوثيق.
               </p>
             </div>
@@ -376,11 +365,11 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={nafathPending}
-              className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2"
+              className="w-full btn-primary py-3 rounded-soft text-label-md flex items-center justify-center gap-2 shadow-level-1"
             >
               {nafathPending ? (
                 <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+                  <span className="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
                   بانتظار قبول طلب نفاذ...
                 </span>
               ) : (
@@ -393,26 +382,26 @@ export default function LoginPage() {
         {/* TAB 3: Email & Password */}
         {authTab === "email" && (
           <form onSubmit={handleEmailLogin} className="space-y-4 text-right">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">البريد الإلكتروني الرسمي</label>
+            <div className="space-y-1">
+              <label className="text-label-md text-on-surface-variant">البريد الإلكتروني الرسمي</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="salman.partner@salman-law.sa"
-                className="w-full bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl text-sm text-left font-mono focus:border-amber-500 focus:outline-none"
+                placeholder="demo@demo22.com"
+                className="w-full bg-surface-container-low border border-outline-variant px-3 py-2.5 rounded-soft text-body-md text-on-surface font-tabular"
                 dir="ltr"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">كلمة المرور</label>
+            <div className="space-y-1">
+              <label className="text-label-md text-on-surface-variant">كلمة المرور</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl text-sm text-left font-mono focus:border-amber-500 focus:outline-none"
+                placeholder="Demo123456"
+                className="w-full bg-surface-container-low border border-outline-variant px-3 py-2.5 rounded-soft text-body-md text-on-surface font-tabular"
                 dir="ltr"
               />
             </div>
@@ -420,10 +409,10 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2"
+              className="w-full btn-primary py-3 rounded-soft text-label-md flex items-center justify-center gap-2 shadow-level-1"
             >
               {loading ? (
-                <span className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+                <span className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
               ) : (
                 "دخول النظام الفوري"
               )}
@@ -431,35 +420,34 @@ export default function LoginPage() {
           </form>
         )}
 
-        {/* Quick Demo Workspace Selector */}
-        <div className="border-t border-slate-800/80 pt-4 space-y-3">
-          <p className="text-xs font-semibold text-slate-400 text-center">
-            ⚡ الدخول السريع لأحد المكاتب المعتمدة بالسعودية (Quick Select):
+        {/* Dedicated 1-Click Demo Sign-in Section */}
+        <div className="border-t border-outline-variant pt-4 space-y-3">
+          <p className="text-label-sm font-semibold text-primary text-center">
+            ⚡ الدخول السريع للحساب التجريبي المعتمد (Quick 1-Click Demo):
           </p>
 
-          <div className="grid grid-cols-1 gap-2">
-            {/* Dedicated Primary Demo Account Button */}
-            <button
-              type="button"
-              onClick={() => {
-                setEmail("demo@demo22.com");
-                setPassword("Demo123456");
-                performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو", "مكتب الديمو المعتمد للمحاماة والاستشارات القانونية");
-              }}
-              className="w-full p-3.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 flex items-center justify-between text-right transition group shadow-md"
-            >
-              <div>
-                <div className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                  <span>🔑 حساب التجربة الرئيسي (Demo Account)</span>
-                  <span className="bg-amber-500 text-slate-950 text-[10px] px-2 py-0.5 rounded-full font-bold">معتمد</span>
-                </div>
-                <div className="text-[11px] text-slate-300 font-body mt-0.5">
-                  demo@demo22.com | كلمة المرور: Demo123456
-                </div>
+          <button
+            type="button"
+            onClick={() => {
+              setEmail("demo@demo22.com");
+              setPassword("Demo123456");
+              performSessionLogin("demo@demo22.com", "د. عبد الرحمن الديمو", "مكتب الديمو المعتمد للمحاماة واستشارات القضايا");
+            }}
+            className="w-full p-3.5 rounded-card bg-surface-container-low hover:bg-surface-container-high border border-outline-variant flex items-center justify-between text-right transition group shadow-level-1"
+          >
+            <div>
+              <div className="text-label-md font-bold text-primary flex items-center gap-1.5">
+                <span>🔑 حساب التجربة الرئيسي (Demo Account)</span>
+                <span className="bg-primary/10 text-primary border border-primary/20 text-[10px] px-2 py-0.5 rounded-pill font-bold">جاهز</span>
               </div>
-              <ArrowRight className="w-4 h-4 text-amber-400 -rotate-180 group-hover:translate-x-1 transition" />
-            </button>
+              <div className="text-label-sm text-on-surface-variant font-body mt-0.5">
+                demo@demo22.com | كلمة المرور: Demo123456
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-primary rotate-180 group-hover:translate-x-1 transition" />
+          </button>
 
+          <div className="grid grid-cols-1 gap-2">
             {SEEDED_FIRMS.map((firm) => {
               const mainLawyer = firm.lawyers[0];
               return (
@@ -469,17 +457,17 @@ export default function LoginPage() {
                     setEmail(mainLawyer.email);
                     performSessionLogin(mainLawyer.email, mainLawyer.name, firm.name);
                   }}
-                  className="w-full p-3 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800/80 flex items-center justify-between text-right transition group"
+                  className="w-full p-2.5 rounded-soft card-interactive flex items-center justify-between text-right text-xs"
                 >
                   <div>
-                    <div className="text-xs font-bold text-slate-200 group-hover:text-amber-400 transition">
+                    <div className="font-semibold text-on-surface">
                       {firm.name} ({firm.city})
                     </div>
-                    <div className="text-[11px] text-slate-400 font-body">
+                    <div className="text-on-surface-variant font-body text-[11px]">
                       المحامي: {mainLawyer.name}
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-amber-400 -rotate-180 opacity-0 group-hover:opacity-100 transition" />
+                  <ArrowRight className="w-3.5 h-3.5 text-primary rotate-180 opacity-0 group-hover:opacity-100 transition" />
                 </button>
               );
             })}
