@@ -92,6 +92,14 @@ export default function IntegrationsPage() {
       status: "مربوط",
       desc: "تشفير وإرسال الفواتير والإشعارات الضريبية لمكاتب المحاماة عبر UBL 2.1 XML.",
     },
+    {
+      id: "AUTHENTICA_SA",
+      name: "منصة أثنتيكا السعودية (Authentica.sa)",
+      url: "https://authentica.sa",
+      category: "تحقق بالـ OTP وبصمة حيويّة",
+      status: "متصل وحي 🟢",
+      desc: "إرسال رموز التحقق OTP عبر SMS والواتساب والبريد، والتحقق البيومتري من الوجه والصوت.",
+    },
   ];
 
   useEffect(() => {

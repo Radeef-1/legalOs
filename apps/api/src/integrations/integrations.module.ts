@@ -7,6 +7,8 @@ import { OAuthManagerService } from './core/oauth-manager.service';
 import { WebhookEngineService } from './core/webhook-engine.service';
 import { IntegrationEventListener } from './events/integration-event.listener';
 import { IntegrationHubController } from './controllers/integration-hub.controller';
+import { AuthenticaService } from './authentica/authentica.service';
+import { AuthenticaController } from './authentica/authentica.controller';
 
 // Sub-modules
 import { GovernmentConnectorsModule } from './connectors/government/government-connectors.module';
@@ -31,13 +33,14 @@ import { HubspotBusinessAdapter } from './connectors/business/webhook-connectors
     ProductivityConnectorsModule,
     BusinessConnectorsModule,
   ],
-  controllers: [IntegrationHubController],
+  controllers: [IntegrationHubController, AuthenticaController],
   providers: [
     SecretVaultService,
     ProviderRegistryService,
     OAuthManagerService,
     WebhookEngineService,
     IntegrationEventListener,
+    AuthenticaService,
   ],
   exports: [
     SecretVaultService,
@@ -45,6 +48,7 @@ import { HubspotBusinessAdapter } from './connectors/business/webhook-connectors
     OAuthManagerService,
     WebhookEngineService,
     IntegrationEventListener,
+    AuthenticaService,
   ],
 })
 export class IntegrationsModule implements OnModuleInit {
