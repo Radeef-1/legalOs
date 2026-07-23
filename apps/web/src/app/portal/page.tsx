@@ -40,33 +40,24 @@ import {
 } from "lucide-react";
 
 // Multi-Tenant Firm Branding Data
-const DEMO_FIRMS = [
+const OFFICIAL_FIRMS = [
   {
-    id: "salman-law",
-    name: "مكتب السلمان للمحاماة والاستشارات القانونية",
-    subtitle: "الدكتور عبد الله السلمان ومشاركوه - الرياض",
-    subdomain: "salman-law.legalos.sa",
+    id: "otaibi-law",
+    name: "مكتب العتيبي للمحاماة والاستشارات القانونية والشرعية",
+    subtitle: "د. عبد الرحمن بن فهد العتيبي ومشاركوه - الرياض",
+    subdomain: "otaibi-law.legalos.sa",
     primaryColor: "bg-primary text-on-primary",
     badge: "توكيل رقم: 449810293",
-    logoText: "السلمان",
+    logoText: "العتيبي",
   },
   {
-    id: "aladl-law",
-    name: "مكتب العدل والتميز للمحاماة",
-    subtitle: "المحامي عبد العزيز الغامدي - جدة",
-    subdomain: "aladl.legalos.sa",
+    id: "sharaf-law",
+    name: "مكتب شرف واستشارات الأعمال القانونية",
+    subtitle: "المحامي فهد بن عبد العزيز الشرف - جدة",
+    subdomain: "sharaf.legalos.sa",
     primaryColor: "bg-emerald-700 text-white",
     badge: "توكيل رقم: 449019283",
-    logoText: "العدل",
-  },
-  {
-    id: "khubara-law",
-    name: "شركة الخبراء القانونية القابضة",
-    subtitle: "مستشارون تجاريون ودوليون - الخبر",
-    subdomain: "khubara.legalos.sa",
-    primaryColor: "bg-purple-800 text-white",
-    badge: "توكيل رقم: 449552109",
-    logoText: "الخبراء",
+    logoText: "الشرف",
   },
 ];
 
@@ -74,7 +65,7 @@ export default function ClientPortalPage() {
   const router = useRouter();
 
   // Selected Firm Tenant State
-  const [selectedFirm, setSelectedFirm] = useState(DEMO_FIRMS[0]);
+  const [selectedFirm, setSelectedFirm] = useState(OFFICIAL_FIRMS[0]);
 
   // Auth State
   const [authMode, setAuthMode] = useState<"logged" | "otp">("logged");
@@ -371,12 +362,12 @@ export default function ClientPortalPage() {
             <select
               value={selectedFirm.id}
               onChange={(e) => {
-                const firm = DEMO_FIRMS.find((f) => f.id === e.target.value);
+                const firm = OFFICIAL_FIRMS.find((f: any) => f.id === e.target.value);
                 if (firm) setSelectedFirm(firm);
               }}
               className="bg-transparent text-primary font-semibold focus:outline-none"
             >
-              {DEMO_FIRMS.map((f) => (
+              {OFFICIAL_FIRMS.map((f: any) => (
                 <option key={f.id} value={f.id}>
                   {f.name}
                 </option>
