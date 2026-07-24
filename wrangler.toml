@@ -1,4 +1,4 @@
-name = "legalos-edge-worker"
+name = "legalos"
 main = "infra/cloudflare-worker/src/index.ts"
 compatibility_date = "2026-07-01"
 compatibility_flags = ["nodejs_compat"]
