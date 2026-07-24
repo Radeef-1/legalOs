@@ -1,4 +1,16 @@
-import { Controller, Post, Get, Patch, Delete, Body, Param, Headers, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Headers,
+  Query,
+  UseGuards,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PortalAuthService } from '../application/services/portal-auth.service';
 import { PortalCasesService, SubmitClientRequestDto } from '../application/services/portal-cases.service';
 import { PortalDocumentsService } from '../application/services/portal-documents.service';
@@ -11,6 +23,8 @@ import { PortalAppointmentsService, RequestAppointmentDto } from '../application
 import { PortalBrandingService } from '../application/services/portal-branding.service';
 import { PortalPermissionsService } from '../application/services/portal-permissions.service';
 import { PortalAuditService } from '../application/services/portal-audit.service';
+import { PortalAuthGuard } from '../guards/portal-auth.guard';
+import { PortalClient, PortalOrg } from '../decorators/portal-user.decorator';
 
 @Controller('portal')
 export class ClientPortalController {
@@ -29,37 +43,47 @@ export class ClientPortalController {
     private readonly auditService: PortalAuditService,
   ) {}
 
-  // ─── AUTH ────────────────────────────────────────────────────────
+  // ─── AUTH (PUBLIC) ──────────────────────────────────────────────
   @Post('auth/request-otp')
-  async requestOtp(@Headers('x-tenant-id') organizationId: string, @Body('nationalIdOrCr') nationalIdOrCr: string) {
-    return this.authService.requestOtp(organizationId, nationalIdOrCr);
+  async requestOtp(
+    @Headers('x-tenant-id') organizationIdHeader: string,
+    @Body('organizationId') organizationIdBody: string,
+    @Body('nationalIdOrCr') nationalIdOrCr: string,
+  ) {
+    const orgId = organizationIdBody || organizationIdHeader || 'org-salman-2026';
+    return this.authService.requestOtp(orgId, nationalIdOrCr);
   }
 
   @Post('auth/verify-otp')
   async verifyOtp(
-    @Headers('x-tenant-id') organizationId: string,
+    @Headers('x-tenant-id') organizationIdHeader: string,
+    @Body('organizationId') organizationIdBody: string,
     @Body('nationalIdOrCr') nationalIdOrCr: string,
     @Body('otpCode') otpCode: string,
   ) {
-    return this.authService.verifyOtp(organizationId, nationalIdOrCr, otpCode);
+    const orgId = organizationIdBody || organizationIdHeader || 'org-salman-2026';
+    return this.authService.verifyOtp(orgId, nationalIdOrCr, otpCode);
   }
 
-  // ─── BRANDING (Public — no auth needed for login page) ──────────
+  // ─── BRANDING (PUBLIC) ──────────────────────────────────────────
   @Get('branding/:slug')
   async getBrandingBySlug(@Param('slug') slug: string) {
     return this.brandingService.resolveBySlug(slug);
   }
 
   @Get('branding')
-  async getBranding(@Headers('x-tenant-id') organizationId: string) {
-    return this.brandingService.getBranding(organizationId);
+  async getBranding(@Headers('x-tenant-id') organizationIdHeader: string) {
+    const orgId = organizationIdHeader || 'org-salman-2026';
+    return this.brandingService.getBranding(orgId);
   }
 
-  // ─── DASHBOARD ──────────────────────────────────────────────────
+  // ─── PROTECTED ENDPOINTS (MUST PASS PORTAL AUTH GUARD) ──────────
+
   @Get('dashboard')
+  @UseGuards(PortalAuthGuard)
   async getDashboard(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
   ) {
     const data = await this.dashboardService.getDashboardSummary(organizationId, clientId);
     return { success: true, data };
@@ -67,37 +91,54 @@ export class ClientPortalController {
 
   // ─── CASES ──────────────────────────────────────────────────────
   @Get('cases')
-  async getCases(@Headers('x-tenant-id') organizationId: string, @Headers('x-client-id') clientId: string) {
+  @UseGuards(PortalAuthGuard)
+  async getCases(
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
+  ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canViewCases) {
+      throw new ForbiddenException('الموكل لا يملك صلاحية عرض قائمة القضايا.');
+    }
     const data = await this.casesService.getClientCases(organizationId, clientId);
     return { success: true, data };
   }
 
   @Get('cases/:id')
+  @UseGuards(PortalAuthGuard)
   async getCaseById(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Param('id') caseId: string,
   ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canViewCases) {
+      throw new ForbiddenException('الموكل لا يملك صلاحية تفاصيل هذه القضية.');
+    }
     const data = await this.casesService.getClientCaseById(organizationId, clientId, caseId);
     return { success: true, data };
   }
 
-  // ─── CASE TIMELINE & PROGRESS ───────────────────────────────────
   @Get('cases/:id/timeline')
+  @UseGuards(PortalAuthGuard)
   async getCaseTimeline(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Param('id') caseId: string,
   ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canViewCases) {
+      throw new ForbiddenException('الموكل لا يملك صلاحية عرض الجدول الزمني للمستندات والجلسات.');
+    }
     const data = await this.timelineService.getCaseTimeline(organizationId, clientId, caseId);
     return { success: true, data };
   }
 
-  // ─── CLIENT REQUESTS ────────────────────────────────────────────
   @Post('requests')
+  @UseGuards(PortalAuthGuard)
   async submitRequest(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Body() dto: SubmitClientRequestDto,
   ) {
     const data = await this.casesService.submitClientRequest(organizationId, clientId, dto);
@@ -106,65 +147,102 @@ export class ClientPortalController {
 
   // ─── DOCUMENTS ──────────────────────────────────────────────────
   @Get('documents')
-  async getDocuments(@Headers('x-tenant-id') organizationId: string, @Headers('x-client-id') clientId: string) {
+  @UseGuards(PortalAuthGuard)
+  async getDocuments(
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
+  ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canViewDocuments) {
+      throw new ForbiddenException('الموكل لا يملك صلاحية التصفح أو الاطلاع على خزانة الوثائق.');
+    }
     const data = await this.documentsService.getClientDocuments(organizationId, clientId);
     return { success: true, data };
   }
 
   @Post('documents')
+  @UseGuards(PortalAuthGuard)
   async uploadDocument(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Body('caseId') caseId: string,
     @Body('title') title: string,
     @Body('fileUrl') fileUrl: string,
   ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canUpload) {
+      throw new ForbiddenException('الموكل لا يملك صلاحية رفع المستندات جديدة.');
+    }
     const data = await this.documentsService.uploadClientDocument(organizationId, clientId, caseId, title, fileUrl);
     return { success: true, data };
   }
 
   // ─── INVOICES & PAYMENTS ────────────────────────────────────────
   @Get('invoices')
-  async getInvoices(@Headers('x-tenant-id') organizationId: string, @Headers('x-client-id') clientId: string) {
+  @UseGuards(PortalAuthGuard)
+  async getInvoices(
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
+  ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canViewInvoices) {
+      throw new ForbiddenException('الموكل لا يملك صلاحية الاطلاع على قسم الفواتير والحسابات.');
+    }
     const data = await this.financeService.getClientInvoices(organizationId, clientId);
     return { success: true, data };
   }
 
   @Post('invoices/pay')
+  @UseGuards(PortalAuthGuard)
   async payInvoice(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Body() dto: PayInvoiceOnlineDto,
   ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canViewInvoices) {
+      throw new ForbiddenException('الموكل لا يملك صلاحية الدفع الإلكتروني المباشر.');
+    }
     const data = await this.financeService.payInvoiceOnline(organizationId, clientId, dto);
     return { success: true, data };
   }
 
   // ─── MESSAGING ──────────────────────────────────────────────────
   @Get('messages')
+  @UseGuards(PortalAuthGuard)
   async getMessages(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Query('caseId') caseId?: string,
   ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canMessage) {
+      throw new ForbiddenException('صلاحية المراسلة والتواصل المباشر مغلقة من قِبل إدارة المكتب.');
+    }
     const data = await this.messagingService.getMessages(organizationId, clientId, caseId);
     return { success: true, data };
   }
 
   @Post('messages')
+  @UseGuards(PortalAuthGuard)
   async sendMessage(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Body() dto: SendMessageDto,
   ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canMessage) {
+      throw new ForbiddenException('صلاحية المراسلة والتواصل المباشر مغلقة من قِبل إدارة المكتب.');
+    }
     const data = await this.messagingService.sendMessage(organizationId, clientId, dto);
     return { success: true, data };
   }
 
   @Patch('messages/:id/read')
+  @UseGuards(PortalAuthGuard)
   async markMessageAsRead(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Param('id') messageId: string,
   ) {
     await this.messagingService.markAsRead(organizationId, clientId, messageId);
@@ -172,9 +250,10 @@ export class ClientPortalController {
   }
 
   @Patch('messages/read-all')
+  @UseGuards(PortalAuthGuard)
   async markAllMessagesAsRead(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Query('caseId') caseId?: string,
   ) {
     await this.messagingService.markAllAsRead(organizationId, clientId, caseId);
@@ -182,9 +261,10 @@ export class ClientPortalController {
   }
 
   @Get('messages/unread-count')
+  @UseGuards(PortalAuthGuard)
   async getUnreadCount(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
   ) {
     const count = await this.messagingService.getUnreadCount(organizationId, clientId);
     return { success: true, data: { unreadCount: count } };
@@ -192,36 +272,40 @@ export class ClientPortalController {
 
   // ─── ACTION CENTER ──────────────────────────────────────────────
   @Get('actions')
+  @UseGuards(PortalAuthGuard)
   async getPendingActions(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
   ) {
     const data = await this.actionsService.getPendingActions(organizationId, clientId);
     return { success: true, data };
   }
 
   @Get('actions/all')
+  @UseGuards(PortalAuthGuard)
   async getAllActions(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
   ) {
     const data = await this.actionsService.getAllActions(organizationId, clientId);
     return { success: true, data };
   }
 
   @Get('actions/summary')
+  @UseGuards(PortalAuthGuard)
   async getActionsSummary(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
   ) {
     const data = await this.actionsService.getActionsSummary(organizationId, clientId);
     return { success: true, data };
   }
 
   @Patch('actions/:id/complete')
+  @UseGuards(PortalAuthGuard)
   async completeAction(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Param('id') actionId: string,
   ) {
     const data = await this.actionsService.completeAction(organizationId, clientId, actionId);
@@ -230,37 +314,45 @@ export class ClientPortalController {
 
   // ─── APPOINTMENTS ───────────────────────────────────────────────
   @Get('appointments')
+  @UseGuards(PortalAuthGuard)
   async getAppointments(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
   ) {
     const data = await this.appointmentsService.getAppointments(organizationId, clientId);
     return { success: true, data };
   }
 
   @Get('appointments/upcoming')
+  @UseGuards(PortalAuthGuard)
   async getUpcomingAppointments(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
   ) {
     const data = await this.appointmentsService.getUpcomingAppointments(organizationId, clientId);
     return { success: true, data };
   }
 
   @Post('appointments')
+  @UseGuards(PortalAuthGuard)
   async requestAppointment(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Body() dto: RequestAppointmentDto,
   ) {
+    const perms = await this.permissionsService.getClientPermissions(organizationId, clientId);
+    if (!perms.canRequestAppointment) {
+      throw new ForbiddenException('صلاحية طلب مواعيد جديدة مغلقة من قِبل إدارة المكتب.');
+    }
     const data = await this.appointmentsService.requestAppointment(organizationId, clientId, dto);
     return { success: true, data };
   }
 
   @Delete('appointments/:id')
+  @UseGuards(PortalAuthGuard)
   async cancelAppointment(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Param('id') appointmentId: string,
   ) {
     await this.appointmentsService.cancelAppointment(organizationId, clientId, appointmentId);
@@ -269,9 +361,10 @@ export class ClientPortalController {
 
   // ─── PERMISSIONS ────────────────────────────────────────────────
   @Get('permissions')
+  @UseGuards(PortalAuthGuard)
   async getPermissions(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
   ) {
     const data = await this.permissionsService.getClientPermissions(organizationId, clientId);
     return { success: true, data };
@@ -279,9 +372,10 @@ export class ClientPortalController {
 
   // ─── ACTIVITY LOG ───────────────────────────────────────────────
   @Get('activity-log')
+  @UseGuards(PortalAuthGuard)
   async getActivityLog(
-    @Headers('x-tenant-id') organizationId: string,
-    @Headers('x-client-id') clientId: string,
+    @PortalOrg() organizationId: string,
+    @PortalClient() clientId: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {

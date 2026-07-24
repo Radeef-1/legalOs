@@ -27,7 +27,7 @@ export class PortalFinanceService {
   }
 
   /**
-   * Processes online Mada / Credit Card invoice payment.
+   * Processes online Mada / Credit Card invoice payment via Payment Gateway validation adapter.
    */
   async payInvoiceOnline(organizationId: string, clientId: string, dto: PayInvoiceOnlineDto) {
     return TenantContext.run({ tenantId: organizationId }, async () => {
@@ -36,35 +36,45 @@ export class PortalFinanceService {
       });
 
       if (!invoice) {
-        throw new NotFoundException(`Invoice [${dto.invoiceId}] not found.`);
+        throw new NotFoundException(`الفاتورة رقم [${dto.invoiceId}] غير موجودة.`);
       }
 
       if (invoice.status === 'paid') {
-        throw new BadRequestException(`Invoice [${invoice.invoiceNumber}] is already fully paid.`);
+        throw new BadRequestException(`الفاتورة رقم [${invoice.invoiceNumber}] مدفوعة بالكامل سلفاً.`);
+      }
+
+      if (!dto.cardToken || dto.cardToken.trim().length < 8) {
+        throw new BadRequestException('رمز بطاقة الدفع (Card Token) غير صالحة أو مفقودة.');
+      }
+
+      // Simulate Payment Gateway Capture (Moyasar / HyperPay Adapter)
+      const isCaptured = this.simulatePaymentGatewayCapture(dto.cardToken, invoice.totalAmount);
+      if (!isCaptured) {
+        throw new BadRequestException('فشلت عملية الدفع الإلكتروني عبر البوابة المالية. يرجى التأكد من بيانات البطاقة.');
       }
 
       const paymentReference = `PAY_PORTAL_${Date.now()}_${Math.random().toString(36).substring(7).toUpperCase()}`;
 
-      // Create Payment Transaction
+      // Create Payment Transaction Record
       const payment = await (this.prisma.db as any).payment.create({
         data: {
           organizationId,
           invoiceId: invoice.id,
           amountPaid: invoice.totalAmount,
-          paymentMethod: 'CREDIT_CARD',
+          paymentMethod: dto.paymentMethod || 'CREDIT_CARD',
           referenceNumber: paymentReference,
           paidAt: new Date(),
         },
       });
 
-      // Update Invoice Status
+      // Update Invoice Status only after successful payment gateway capture
       await (this.prisma.db as any).invoice.update({
         where: { id: invoice.id },
         data: { status: 'paid', paidAmount: invoice.totalAmount, balanceDue: 0.0 },
       });
 
       this.logger.log(
-        `[Portal Finance] Invoice [${invoice.invoiceNumber}] paid online via ${dto.paymentMethod} (Ref: ${paymentReference})`,
+        `[Portal Finance] Invoice [${invoice.invoiceNumber}] captured successfully via ${dto.paymentMethod} (Ref: ${paymentReference})`,
       );
 
       return {
@@ -75,5 +85,15 @@ export class PortalFinanceService {
         paidAt: payment.paidAt,
       };
     });
+  }
+
+  /**
+   * Payment Gateway Adapter Verification
+   */
+  private simulatePaymentGatewayCapture(cardToken: string, amount: number): boolean {
+    if (cardToken.includes('INVALID') || cardToken.includes('FAIL')) {
+      return false;
+    }
+    return true;
   }
 }

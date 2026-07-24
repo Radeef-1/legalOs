@@ -1,4 +1,5 @@
 import { Injectable, Logger, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../../shared/database/prisma.service';
 import { TenantContext } from '../../../shared/tenant/tenant.context';
 import * as crypto from 'crypto';
@@ -14,10 +15,13 @@ export interface PortalAuthSessionResult {
 export class PortalAuthService {
   private readonly logger = new Logger(PortalAuthService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   /**
-   * Generates and dispatches a 6-digit OTP code for client portal login.
+   * Generates and dispatches a CSPRNG 6-digit OTP code for client portal login.
    */
   async requestOtp(organizationId: string, nationalIdOrCr: string): Promise<{ sessionId: string; message: string }> {
     return TenantContext.run({ tenantId: organizationId }, async () => {
@@ -26,15 +30,15 @@ export class PortalAuthService {
       });
 
       if (!client) {
-        throw new NotFoundException(`No client registered with ID/CR "${nationalIdOrCr}" in this organization.`);
+        throw new NotFoundException(`لم يتم العثور على موكل مسجل برقم الهوية/السجل التجاري "${nationalIdOrCr}".`);
       }
 
       if (!client.portalAccessEnabled) {
-        throw new UnauthorizedException('Client portal access is not enabled for this client account.');
+        throw new UnauthorizedException('بوابة الموكلين غير مفعلة لهذا الحساب.');
       }
 
-      // Generate 6-digit OTP
-      const otpCode = '123456'; // Deterministic mock for verification
+      // Generate CSPRNG 6-digit OTP
+      const otpCode = crypto.randomInt(100000, 999999).toString();
       const otpHash = crypto.createHash('sha256').update(otpCode).digest('hex');
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
 
@@ -47,17 +51,18 @@ export class PortalAuthService {
         },
       });
 
-      this.logger.log(`[Portal Auth] OTP requested for Client [${client.name}] (${client.id}). Code: ${otpCode}`);
+      // Secure log - never log actual OTP in production logs or HTTP responses
+      this.logger.log(`[Portal Auth] Secure OTP generated and dispatched for Client ID [${client.id}]. Session [${session.id}]`);
 
       return {
         sessionId: session.id,
-        message: 'OTP sent successfully to client phone/email.',
+        message: 'تم إرسال رمز التحقق OTP بنجاح إلى جوال الموكل المعتمد.',
       };
     });
   }
 
   /**
-   * Verifies OTP code and issues JWT portal session token.
+   * Verifies OTP code and issues signed JWT portal session token.
    */
   async verifyOtp(
     organizationId: string,
@@ -70,7 +75,7 @@ export class PortalAuthService {
       });
 
       if (!client) {
-        throw new NotFoundException(`Client not found.`);
+        throw new NotFoundException(`لم يتم العثور على ملف الموكل.`);
       }
 
       const inputHash = crypto.createHash('sha256').update(otpCode).digest('hex');
@@ -87,10 +92,22 @@ export class PortalAuthService {
       });
 
       if (!session) {
-        throw new UnauthorizedException('Invalid or expired OTP code.');
+        throw new UnauthorizedException('رمز التحقق غير صحيح أو انتهت صلاحيته.');
       }
 
-      const token = `portal_jwt_${session.id}_${crypto.randomBytes(16).toString('hex')}`;
+      // Sign JWT Portal Token
+      const payload = {
+        sub: client.id,
+        sessionId: session.id,
+        orgId: organizationId,
+        type: 'portal',
+      };
+
+      const secret = process.env.PORTAL_JWT_SECRET || 'legalos_portal_secret_key_2026_prod';
+      const token = this.jwtService.sign(payload, {
+        secret,
+        expiresIn: '8h',
+      });
 
       await (this.prisma.db as any).portalSession.update({
         where: { id: session.id },

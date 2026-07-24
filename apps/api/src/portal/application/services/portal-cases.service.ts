@@ -15,40 +15,70 @@ export class PortalCasesService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Fetches active cases for a specific portal client.
+   * Fetches active cases for a specific portal client with strict payload sanitization.
    */
   async getClientCases(organizationId: string, clientId: string) {
     return TenantContext.run({ tenantId: organizationId }, async () => {
-      return (this.prisma.db as any).case.findMany({
+      const cases = await (this.prisma.db as any).case.findMany({
         where: { organizationId, clientId, deletedAt: null },
         include: {
           hearings: {
+            select: {
+              id: true,
+              title: true,
+              hearingDate: true,
+              status: true,
+              courtName: true,
+              summary: true,
+            },
             orderBy: { hearingDate: 'asc' },
           },
           documents: {
-            select: { id: true, storagePath: true, fileType: true, ocrStatus: true },
+            select: {
+              id: true,
+              fileType: true,
+              createdAt: true,
+            },
           },
         },
         orderBy: { openedAt: 'desc' },
       });
+
+      return cases;
     });
   }
 
   /**
-   * Fetches detailed case timeline by Case ID for portal client.
+   * Fetches detailed case timeline by Case ID for portal client with sanitized fields.
    */
   async getClientCaseById(organizationId: string, clientId: string, caseId: string) {
     return TenantContext.run({ tenantId: organizationId }, async () => {
       const caseItem = await (this.prisma.db as any).case.findFirst({
         where: { id: caseId, organizationId, clientId, deletedAt: null },
         include: {
-          hearings: { orderBy: { hearingDate: 'asc' } },
-          documents: true,
+          hearings: {
+            select: {
+              id: true,
+              title: true,
+              hearingDate: true,
+              status: true,
+              courtName: true,
+              summary: true,
+            },
+            orderBy: { hearingDate: 'asc' },
+          },
+          documents: {
+            select: {
+              id: true,
+              fileType: true,
+              createdAt: true,
+            },
+          },
         },
       });
 
       if (!caseItem) {
-        throw new NotFoundException(`Case [${caseId}] not found for this client.`);
+        throw new NotFoundException(`القضية رقم [${caseId}] غير موجودة أو غير مسجلة لهذا الموكل.`);
       }
 
       return caseItem;

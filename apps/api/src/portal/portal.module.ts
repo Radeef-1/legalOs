@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from '../shared/database/prisma.module';
 import { PortalAuthService } from './application/services/portal-auth.service';
 import { PortalCasesService } from './application/services/portal-cases.service';
@@ -14,11 +15,19 @@ import { PortalPermissionsService } from './application/services/portal-permissi
 import { PortalAuditService } from './application/services/portal-audit.service';
 import { ClientPortalController } from './controllers/client-portal.controller';
 import { PortalAdminController } from './controllers/portal-admin.controller';
+import { PortalAuthGuard } from './guards/portal-auth.guard';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [
+    PrismaModule,
+    JwtModule.register({
+      secret: process.env.PORTAL_JWT_SECRET || 'legalos_portal_secret_key_2026_prod',
+      signOptions: { expiresIn: '8h' },
+    }),
+  ],
   controllers: [ClientPortalController, PortalAdminController],
   providers: [
+    PortalAuthGuard,
     PortalAuthService,
     PortalCasesService,
     PortalDocumentsService,
@@ -33,6 +42,7 @@ import { PortalAdminController } from './controllers/portal-admin.controller';
     PortalAuditService,
   ],
   exports: [
+    PortalAuthGuard,
     PortalAuthService,
     PortalCasesService,
     PortalDocumentsService,
